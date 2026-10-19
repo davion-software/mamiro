@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/copy.dart';
-import 'package:vitalia/core/format.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/features/medications/presentation/medications_notifier.dart';
-import 'package:vitalia/features/medications/presentation/widgets/color_picker.dart';
-import 'package:vitalia/features/medications/presentation/widgets/shape_picker.dart';
-import 'package:vitalia/features/medications/presentation/widgets/weekday_picker.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/core/format.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/features/medications/presentation/medications_notifier.dart';
+import 'package:mamiro/features/medications/presentation/widgets/color_picker.dart';
+import 'package:mamiro/features/medications/presentation/widgets/shape_picker.dart';
+import 'package:mamiro/features/medications/presentation/widgets/weekday_picker.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class MedicationEditorScreen extends ConsumerStatefulWidget {
   const MedicationEditorScreen({super.key, this.medicationId});
@@ -251,7 +251,7 @@ final class _MedicationEditorScreenState
                 TextButton(
                   onPressed: _delete,
                   style: TextButton.styleFrom(
-                    foregroundColor: VitaliaPalette.terracotta,
+                    foregroundColor: MamiroPalette.terracotta,
                   ),
                   child: const Text('Delete medication'),
                 ),
@@ -275,7 +275,7 @@ final class _MedicationEditorScreenState
   void _addTime() {
     unawaited(
       _pickTime().catchError(
-        unexpectedLogger('vitalia.medications', 'medication_editor.intent'),
+        unexpectedLogger('mamiro.medications', 'medication_editor.intent'),
       ),
     );
   }
@@ -333,7 +333,7 @@ final class _MedicationEditorScreenState
   void _delete() {
     unawaited(
       _confirmDelete().catchError(
-        unexpectedLogger('vitalia.medications', 'medication_editor.intent'),
+        unexpectedLogger('mamiro.medications', 'medication_editor.intent'),
       ),
     );
   }
@@ -360,7 +360,7 @@ final class _MedicationEditorScreenState
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: VitaliaPalette.terracotta,
+                foregroundColor: MamiroPalette.terracotta,
               ),
               child: const Text('Delete'),
             ),

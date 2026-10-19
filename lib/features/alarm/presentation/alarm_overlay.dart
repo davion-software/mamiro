@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/copy.dart';
-import 'package:vitalia/features/alarm/presentation/alarm_notifier.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/pill_glyph.dart';
 
 final class AlarmOverlay extends ConsumerStatefulWidget {
   const AlarmOverlay({super.key});
@@ -61,13 +61,13 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
     if (alarm.settings.sound) {
       unawaited(
         SystemSound.play(SystemSoundType.alert)
-            .catchError(unexpectedLogger('vitalia.alarm', 'alarm.feedback')),
+            .catchError(unexpectedLogger('mamiro.alarm', 'alarm.feedback')),
       );
     }
     if (alarm.settings.vibration) {
       unawaited(
         HapticFeedback.heavyImpact().catchError(
-          unexpectedLogger('vitalia.alarm', 'alarm.feedback'),
+          unexpectedLogger('mamiro.alarm', 'alarm.feedback'),
         ),
       );
     }
@@ -90,7 +90,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
     final notifier = ref.read(alarmNotifierProvider.notifier);
     final actionFailure = alarm.actionFailure;
     return Material(
-      color: VitaliaPalette.sage,
+      color: MamiroPalette.sage,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
@@ -120,7 +120,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                             fontWeight: FontWeight.w600,
                             fontSize: 72,
                             height: 1,
-                            color: VitaliaPalette.paper,
+                            color: MamiroPalette.paper,
                           ),
                         ),
                         const SizedBox(height: 36),
@@ -133,7 +133,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                             fontFamily: 'Fraunces',
                             fontWeight: FontWeight.w600,
                             fontSize: 34,
-                            color: VitaliaPalette.paper,
+                            color: MamiroPalette.paper,
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -166,8 +166,8 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                 child: FilledButton(
                   onPressed: () => notifier.take(slot.id),
                   style: FilledButton.styleFrom(
-                    backgroundColor: VitaliaPalette.paper,
-                    foregroundColor: VitaliaPalette.sage,
+                    backgroundColor: MamiroPalette.paper,
+                    foregroundColor: MamiroPalette.sage,
                   ),
                   child: const Text('Take now'),
                 ),
@@ -178,8 +178,8 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                 child: OutlinedButton(
                   onPressed: () => notifier.snooze(slot.id),
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: VitaliaPalette.paper,
-                    side: const BorderSide(color: VitaliaPalette.paper),
+                    foregroundColor: MamiroPalette.paper,
+                    side: const BorderSide(color: MamiroPalette.paper),
                   ),
                   child: Text('Snooze $snooze min'),
                 ),
@@ -188,7 +188,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
               TextButton(
                 onPressed: () => notifier.skip(slot.id),
                 style: TextButton.styleFrom(
-                  foregroundColor: VitaliaPalette.paper,
+                  foregroundColor: MamiroPalette.paper,
                 ),
                 child: const Text('Skip'),
               ),
@@ -199,7 +199,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontFamily: 'Outfit',
-                    color: VitaliaPalette.paper,
+                    color: MamiroPalette.paper,
                   ),
                 ),
               ],

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/day_summary.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/format.dart';
-import 'package:vitalia/features/history/presentation/history_notifier.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/async_page.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/storage_banner.dart';
+import 'package:mamiro/core/day_summary.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/format.dart';
+import 'package:mamiro/features/history/presentation/history_notifier.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/async_page.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/storage_banner.dart';
 
 final class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -59,13 +59,13 @@ final class _HistoryContent extends StatelessWidget {
                         Text(
                           state.summaryLabel,
                           style: Theme.of(context).textTheme.bodyLarge
-                              ?.copyWith(color: VitaliaPalette.inkSoft),
+                              ?.copyWith(color: MamiroPalette.inkSoft),
                         ),
                         const SizedBox(height: 16),
                         Text(
                           state.streakLabel,
                           style: Theme.of(context).textTheme.titleMedium
-                              ?.copyWith(color: VitaliaPalette.sage),
+                              ?.copyWith(color: MamiroPalette.sage),
                         ),
                       ],
                     ),
@@ -90,7 +90,7 @@ final class _HistoryContent extends StatelessWidget {
                     Text(
                       'Takes, skips, and snoozes will land here.',
                       style: Theme.of(context).textTheme.bodyLarge
-                          ?.copyWith(color: VitaliaPalette.inkSoft),
+                          ?.copyWith(color: MamiroPalette.inkSoft),
                     ),
                 ],
               ),
@@ -157,11 +157,11 @@ final class _HistoryEventCard extends StatelessWidget {
   Color _actionColor(DoseAction action) {
     switch (action) {
       case DoseAction.taken:
-        return VitaliaPalette.sage;
+        return MamiroPalette.sage;
       case DoseAction.skipped:
-        return VitaliaPalette.terracotta;
+        return MamiroPalette.terracotta;
       case DoseAction.snoozed:
-        return VitaliaPalette.inkSoft;
+        return MamiroPalette.inkSoft;
     }
   }
 }
@@ -178,17 +178,17 @@ final class _DayCell extends StatelessWidget {
     final Color border;
     switch (mark) {
       case DayMark.complete:
-        fill = VitaliaPalette.sage;
-        border = VitaliaPalette.sage;
+        fill = MamiroPalette.sage;
+        border = MamiroPalette.sage;
       case DayMark.mixed:
-        fill = VitaliaPalette.terracotta;
-        border = VitaliaPalette.terracotta;
+        fill = MamiroPalette.terracotta;
+        border = MamiroPalette.terracotta;
       case DayMark.pending:
         fill = Colors.transparent;
-        border = VitaliaPalette.sage;
+        border = MamiroPalette.sage;
       case DayMark.empty:
         fill = Colors.transparent;
-        border = VitaliaPalette.line;
+        border = MamiroPalette.line;
     }
     return Column(
       children: [
@@ -214,8 +214,8 @@ final class _DayCell extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: mark == DayMark.complete || mark == DayMark.mixed
-                      ? VitaliaPalette.paper
-                      : VitaliaPalette.ink,
+                      ? MamiroPalette.paper
+                      : MamiroPalette.ink,
                 ),
               ),
             ),

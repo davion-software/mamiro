@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitalia/features/medications/presentation/medications_notifier.dart';
-import 'package:vitalia/routing/routes.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/async_page.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/pill_glyph.dart';
-import 'package:vitalia/theme/widgets/storage_banner.dart';
+import 'package:mamiro/features/medications/presentation/medications_notifier.dart';
+import 'package:mamiro/routing/routes.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/async_page.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/storage_banner.dart';
 
 final class MedicationsScreen extends ConsumerWidget {
   const MedicationsScreen({super.key});
@@ -47,7 +47,7 @@ final class _MedicationList extends StatelessWidget {
                   Text(
                     'What you take, when, and on which days.',
                     style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(color: VitaliaPalette.inkSoft),
+                        ?.copyWith(color: MamiroPalette.inkSoft),
                   ),
                   const SizedBox(height: 24),
                   if (failure != null) StorageBanner(failure: failure),
@@ -55,7 +55,7 @@ final class _MedicationList extends StatelessWidget {
                     Text(
                       "The cabinet is empty. Add a medication to start today's slots.",
                       style: Theme.of(context).textTheme.bodyLarge
-                          ?.copyWith(color: VitaliaPalette.inkSoft),
+                          ?.copyWith(color: MamiroPalette.inkSoft),
                     ),
                 ],
               ),
@@ -114,15 +114,15 @@ final class _MedCard extends StatelessWidget {
                     quantityLabel,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: med.needsRefill
-                          ? VitaliaPalette.terracotta
-                          : VitaliaPalette.sage,
+                          ? MamiroPalette.terracotta
+                          : MamiroPalette.sage,
                       letterSpacing: 0.3,
                     ),
                   ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: VitaliaPalette.inkSoft),
+          const Icon(Icons.chevron_right, color: MamiroPalette.inkSoft),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/features/medications/presentation/widgets/choice_tile.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/features/medications/presentation/widgets/choice_tile.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/pill_glyph.dart';
 
 final class ShapePicker extends StatelessWidget {
   const ShapePicker({

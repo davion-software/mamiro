@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitalia/core/copy.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/storage_failure.dart';
+import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/storage_failure.dart';
 
 void main() {
   test('enum byName round-trips every known value', () {

@@ -2,23 +2,23 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/features/alarm/presentation/alarm_overlay.dart';
-import 'package:vitalia/features/alarm/presentation/alarm_notifier.dart';
-import 'package:vitalia/routing/app_router.dart';
-import 'package:vitalia/services/app_providers.dart';
-import 'package:vitalia/theme/vitalia_theme.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/features/alarm/presentation/alarm_overlay.dart';
+import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/routing/app_router.dart';
+import 'package:mamiro/services/app_providers.dart';
+import 'package:mamiro/theme/mamiro_theme.dart';
 
-final class VitaliaApp extends ConsumerStatefulWidget {
-  const VitaliaApp({super.key});
+final class MamiroApp extends ConsumerStatefulWidget {
+  const MamiroApp({super.key});
 
   @override
-  ConsumerState<VitaliaApp> createState() => _VitaliaAppState();
+  ConsumerState<MamiroApp> createState() => _MamiroAppState();
 }
 
-final class _VitaliaAppState extends ConsumerState<VitaliaApp>
+final class _MamiroAppState extends ConsumerState<MamiroApp>
     with WidgetsBindingObserver {
   @override
   void initState() {
@@ -36,9 +36,9 @@ final class _VitaliaAppState extends ConsumerState<VitaliaApp>
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     return MaterialApp.router(
-      title: 'Vitalia',
+      title: 'Mamiro',
       debugShowCheckedModeBanner: false,
-      theme: vitaliaTheme(),
+      theme: mamiroTheme(),
       routerConfig: router,
       builder: (context, child) {
         return Stack(
@@ -58,7 +58,7 @@ final class _VitaliaAppState extends ConsumerState<VitaliaApp>
       case AppLifecycleState.paused:
         unawaited(
           _flush().catchError(
-            unexpectedLogger('vitalia.lifecycle', 'lifecycle.flush'),
+            unexpectedLogger('mamiro.lifecycle', 'lifecycle.flush'),
           ),
         );
       case AppLifecycleState.detached:
@@ -68,12 +68,12 @@ final class _VitaliaAppState extends ConsumerState<VitaliaApp>
   }
 
   Future<void> _flush() async {
-    final result = await ref.read(vitaliaRepositoryProvider).flush();
+    final result = await ref.read(mamiroRepositoryProvider).flush();
     switch (result) {
       case Ok():
         return;
       case Err(:final failure):
-        logFailure('vitalia.lifecycle', failure);
+        logFailure('mamiro.lifecycle', failure);
     }
   }
 }

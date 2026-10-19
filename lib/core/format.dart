@@ -1,4 +1,4 @@
-import 'package:vitalia/core/dose_event.dart';
+import 'package:mamiro/core/dose_event.dart';
 
 const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const _months = [

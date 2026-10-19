@@ -1,25 +1,25 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/app_database.dart';
-import 'package:vitalia/data/repository.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/app_database.dart';
+import 'package:mamiro/data/repository.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>(
   (ref) =>
       throw UnimplementedError('Override appDatabaseProvider in bootstrap'),
 );
 
-final vitaliaRepositoryProvider = Provider<VitaliaRepository>(
-  (ref) => VitaliaRepository(ref.watch(appDatabaseProvider)),
+final mamiroRepositoryProvider = Provider<MamiroRepository>(
+  (ref) => MamiroRepository(ref.watch(appDatabaseProvider)),
 );
 
 final medicationsProvider =
     StreamProvider<Result<List<Medication>, StorageFailure>>(
-      (ref) => ref.watch(vitaliaRepositoryProvider).watchMedications(),
+      (ref) => ref.watch(mamiroRepositoryProvider).watchMedications(),
     );
 
 final settingsProvider = StreamProvider<Result<AppSettings, StorageFailure>>(
-  (ref) => ref.watch(vitaliaRepositoryProvider).watchSettings(),
+  (ref) => ref.watch(mamiroRepositoryProvider).watchSettings(),
 );

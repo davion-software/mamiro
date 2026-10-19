@@ -1,5 +1,5 @@
 import 'package:drift/drift.dart';
-import 'package:vitalia/data/database_pragmas.dart';
+import 'package:mamiro/data/database_pragmas.dart';
 
 part 'app_database.g.dart';
 

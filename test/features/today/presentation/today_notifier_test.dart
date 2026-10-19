@@ -5,15 +5,15 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/app_database.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/data/repository.dart';
-import 'package:vitalia/features/today/presentation/today_notifier.dart';
-import 'package:vitalia/services/app_providers.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/app_database.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/data/repository.dart';
+import 'package:mamiro/features/today/presentation/today_notifier.dart';
+import 'package:mamiro/services/app_providers.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,12 +23,12 @@ void main() {
     final now = DateTime(2026, 8, 26, 8, 5);
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(database),
-        vitaliaRepositoryProvider.overrideWithValue(repository),
+        mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(Clock.fixed(now)),
         idGeneratorProvider.overrideWithValue(() => 'notifier-event'),
         currentMinuteProvider.overrideWithValue(AsyncData(now)),
@@ -61,12 +61,12 @@ void main() {
     final now = DateTime(2026, 8, 26, 8, 5);
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(database),
-        vitaliaRepositoryProvider.overrideWithValue(repository),
+        mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(Clock.fixed(now)),
         idGeneratorProvider.overrideWithValue(() => 'notifier-event'),
         currentMinuteProvider.overrideWithValue(AsyncData(now)),
@@ -97,12 +97,12 @@ void main() {
     addTearDown(ticks.close);
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
     final container = ProviderContainer(
       overrides: [
         appDatabaseProvider.overrideWithValue(database),
-        vitaliaRepositoryProvider.overrideWithValue(repository),
+        mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(Clock.fixed(beforeDose)),
         idGeneratorProvider.overrideWithValue(() => 'notifier-event'),
         currentMinuteProvider.overrideWith((ref) => ticks.stream),

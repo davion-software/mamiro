@@ -6,15 +6,15 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/app.dart';
-import 'package:vitalia/core/id_generator.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/data/app_database.dart';
-import 'package:vitalia/data/database_connection.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/data/repository.dart';
-import 'package:vitalia/services/app_providers.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/app.dart';
+import 'package:mamiro/core/id_generator.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/data/app_database.dart';
+import 'package:mamiro/data/database_connection.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/data/repository.dart';
+import 'package:mamiro/services/app_providers.dart';
+import 'package:mamiro/theme/palette.dart';
 
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,19 +23,19 @@ Future<void> bootstrap() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: VitaliaPalette.paper,
+      systemNavigationBarColor: MamiroPalette.paper,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
   final database = AppDatabase(await openDatabaseConnection());
-  final repository = VitaliaRepository(database);
+  final repository = MamiroRepository(database);
   final initialization = await repository.initialize();
   switch (initialization) {
     case Ok():
       break;
     case Err(:final failure):
-      developer.log(failure.code, name: 'vitalia.bootstrap');
+      developer.log(failure.code, name: 'mamiro.bootstrap');
   }
 
   const appClock = Clock();
@@ -45,11 +45,11 @@ Future<void> bootstrap() async {
       retry: (count, error) => null,
       overrides: [
         appDatabaseProvider.overrideWithValue(database),
-        vitaliaRepositoryProvider.overrideWithValue(repository),
+        mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(appClock),
         idGeneratorProvider.overrideWithValue(idGenerator),
       ],
-      child: const VitaliaApp(),
+      child: const MamiroApp(),
     ),
   );
 }
@@ -68,7 +68,7 @@ void _installErrorHandlers() {
       FlutterError.presentError(details);
       developer.log(
         details.exceptionAsString(),
-        name: 'vitalia.flutter',
+        name: 'mamiro.flutter',
         error: details.exception,
         stackTrace: details.stack,
       );
@@ -81,7 +81,7 @@ void _installErrorHandlers() {
     try {
       developer.log(
         'uncaught async error',
-        name: 'vitalia.platform',
+        name: 'mamiro.platform',
         error: error,
         stackTrace: stack,
       );

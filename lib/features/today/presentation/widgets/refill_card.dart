@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/pill_glyph.dart';
 
 final class RefillCard extends StatelessWidget {
   const RefillCard({required this.medication, super.key});

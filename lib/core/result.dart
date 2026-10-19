@@ -1,5 +1,5 @@
 import 'package:meta/meta.dart';
-import 'package:vitalia/core/storage_failure.dart';
+import 'package:mamiro/core/storage_failure.dart';
 
 @immutable
 sealed class Result<T, F extends Failure> {

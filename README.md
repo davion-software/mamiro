@@ -1,4 +1,4 @@
-# Vitalia
+# Mamiro
 
 A calm pill cabinet and alarm clock from Davion Software. Never miss a dose.
 
@@ -6,9 +6,9 @@ Private rhythm keeper for iOS and Android. No accounts. No backend. Data stays o
 
 ## What it does
 
-Tell Vitalia what you take, when, and on which days. Today's slots sit in Later until the clock catches them. At dose time a full-screen alarm holds until you Take, Snooze, or Skip. Missed doses stay on Today for two hours past the scheduled time, then remain so you can still Take or Skip.
+Tell Mamiro what you take, when, and on which days. Today's slots sit in Later until the clock catches them. At dose time a full-screen alarm holds until you Take, Snooze, or Skip. Missed doses stay on Today for two hours past the scheduled time, then remain so you can still Take or Skip.
 
-Alarms work while the app is open. The OS will not wake a killed Vitalia process.
+Alarms work while the app is open. The OS will not wake a killed Mamiro process.
 
 ## Tabs
 
@@ -30,8 +30,8 @@ flutter doctor
 ## Run
 
 ```bash
-git clone git@github.com:davion-software/vitalia.git
-cd vitalia
+git clone git@github.com:davion-software/mamiro.git
+cd mamiro
 flutter pub get
 dart run build_runner build
 flutter run

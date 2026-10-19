@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/copy.dart';
-import 'package:vitalia/features/settings/presentation/settings_notifier.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/async_page.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/storage_banner.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/features/settings/presentation/settings_notifier.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/async_page.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/storage_banner.dart';
 
 final class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -60,7 +60,7 @@ final class _SettingsContent extends ConsumerWidget {
         Text('Settings', style: Theme.of(context).textTheme.headlineLarge),
         const SizedBox(height: 8),
         Text(
-          'Alarms ring while Vitalia is open. iOS and Android will not wake a killed app for these reminders. Keep the app nearby at dose times, or pair with a system alarm if you need a backup.',
+          'Alarms ring while Mamiro is open. iOS and Android will not wake a killed app for these reminders. Keep the app nearby at dose times, or pair with a system alarm if you need a backup.',
           style: Theme.of(context).textTheme.bodyMedium,
         ),
         if (state.failure case final failure?) ...[
@@ -109,13 +109,13 @@ final class _SettingsContent extends ConsumerWidget {
                     child: ChoiceChip(
                       label: Text('$minutes min'),
                       selected: settings.snoozeMinutes == minutes,
-                      selectedColor: VitaliaPalette.sageMist,
+                      selectedColor: MamiroPalette.sageMist,
                       labelStyle: TextStyle(
                         fontFamily: 'Outfit',
                         fontWeight: FontWeight.w600,
                         color: settings.snoozeMinutes == minutes
-                            ? VitaliaPalette.sage
-                            : VitaliaPalette.ink,
+                            ? MamiroPalette.sage
+                            : MamiroPalette.ink,
                       ),
                       onSelected: (selected) {
                         if (!selected) return;
@@ -141,7 +141,7 @@ final class _SettingsContent extends ConsumerWidget {
         TextButton(
           onPressed: () => _startConfirmClear(context, ref),
           style: TextButton.styleFrom(
-            foregroundColor: VitaliaPalette.terracotta,
+            foregroundColor: MamiroPalette.terracotta,
           ),
           child: const Text('Clear all data'),
         ),
@@ -152,7 +152,7 @@ final class _SettingsContent extends ConsumerWidget {
   void _startConfirmClear(BuildContext context, WidgetRef ref) {
     unawaited(
       _confirmClear(context, ref).catchError(
-        unexpectedLogger('vitalia.settings', 'settings.confirm_clear'),
+        unexpectedLogger('mamiro.settings', 'settings.confirm_clear'),
       ),
     );
   }
@@ -174,7 +174,7 @@ final class _SettingsContent extends ConsumerWidget {
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: VitaliaPalette.terracotta,
+                foregroundColor: MamiroPalette.terracotta,
               ),
               child: const Text('Clear all'),
             ),

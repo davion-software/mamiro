@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class ColorPicker extends StatelessWidget {
   const ColorPicker({required this.color, required this.onChanged, super.key});
@@ -26,7 +26,7 @@ final class ColorPicker extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: color == value
-                        ? VitaliaPalette.ink
+                        ? MamiroPalette.ink
                         : Colors.transparent,
                     width: 2.4,
                   ),

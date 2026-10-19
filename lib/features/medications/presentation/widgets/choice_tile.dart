@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class ChoiceTile extends StatelessWidget {
   const ChoiceTile({
@@ -16,11 +16,11 @@ final class ChoiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? VitaliaPalette.sageMist : VitaliaPalette.paperDeep,
+      color: selected ? MamiroPalette.sageMist : MamiroPalette.paperDeep,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: selected ? VitaliaPalette.sage : VitaliaPalette.line,
+          color: selected ? MamiroPalette.sage : MamiroPalette.line,
         ),
       ),
       child: InkWell(

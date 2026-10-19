@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
 const weekdayLabels = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
@@ -43,7 +43,7 @@ final class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? VitaliaPalette.sage : VitaliaPalette.paperDeep,
+      color: selected ? MamiroPalette.sage : MamiroPalette.paperDeep,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
@@ -57,7 +57,7 @@ final class _DayChip extends StatelessWidget {
                 fontFamily: 'Outfit',
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? VitaliaPalette.paper : VitaliaPalette.ink,
+                color: selected ? MamiroPalette.paper : MamiroPalette.ink,
               ),
             ),
           ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/copy.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
+import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
 
 final class StorageBanner extends StatelessWidget {
   const StorageBanner({required this.failure, super.key});

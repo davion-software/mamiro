@@ -1,4 +1,4 @@
-import 'package:vitalia/core/medication.dart';
+import 'package:mamiro/core/medication.dart';
 
 List<Medication> demoCabinet() {
   return const [

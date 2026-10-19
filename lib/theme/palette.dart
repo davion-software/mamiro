@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:vitalia/core/medication.dart';
+import 'package:mamiro/core/medication.dart';
 
-abstract final class VitaliaPalette {
+abstract final class MamiroPalette {
   static const paper = Color(0xFFF7F3EA);
   static const paperDeep = Color(0xFFEFE8D8);
   static const ink = Color(0xFF1F1A16);
@@ -21,7 +21,7 @@ Color colorFor(PillColor color) {
     case PillColor.moss:
       return const Color(0xFF7A8F45);
     case PillColor.terracotta:
-      return VitaliaPalette.terracotta;
+      return MamiroPalette.terracotta;
     case PillColor.clay:
       return const Color(0xFFB07D5A);
     case PillColor.sand:
@@ -31,7 +31,7 @@ Color colorFor(PillColor color) {
     case PillColor.ink:
       return const Color(0xFF2A2622);
     case PillColor.blush:
-      return VitaliaPalette.blush;
+      return MamiroPalette.blush;
   }
 }
 

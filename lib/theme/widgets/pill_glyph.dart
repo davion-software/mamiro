@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/theme/palette.dart';
 
 class PillGlyph extends StatelessWidget {
   const PillGlyph({

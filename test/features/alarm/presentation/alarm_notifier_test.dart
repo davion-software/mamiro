@@ -1,14 +1,14 @@
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/snapshot.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/features/alarm/presentation/alarm_notifier.dart';
-import 'package:vitalia/services/app_providers.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/snapshot.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/services/app_providers.dart';
 
 void main() {
   testWidgets('Alarm appears exactly when a scheduled dose becomes due', (

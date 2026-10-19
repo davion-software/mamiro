@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/format.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/schedule.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/services/app_providers.dart';
-import 'package:vitalia/services/async_combine.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/format.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/schedule.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/services/app_providers.dart';
+import 'package:mamiro/services/async_combine.dart';
 
 @immutable
 final class AlarmState {
@@ -129,7 +129,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       _record(
         slotId,
         DoseAction.taken,
-      ).catchError(unexpectedLogger('vitalia.alarm', 'alarm.intent')),
+      ).catchError(unexpectedLogger('mamiro.alarm', 'alarm.intent')),
     );
   }
 
@@ -138,7 +138,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       _record(
         slotId,
         DoseAction.skipped,
-      ).catchError(unexpectedLogger('vitalia.alarm', 'alarm.intent')),
+      ).catchError(unexpectedLogger('mamiro.alarm', 'alarm.intent')),
     );
   }
 
@@ -147,7 +147,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       _record(
         slotId,
         DoseAction.snoozed,
-      ).catchError(unexpectedLogger('vitalia.alarm', 'alarm.intent')),
+      ).catchError(unexpectedLogger('mamiro.alarm', 'alarm.intent')),
     );
   }
 
@@ -159,7 +159,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       return;
     }
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .recordSlot(
           slot: alarm.slot,
           action: action,
@@ -172,7 +172,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       case Ok():
         return;
       case Err(:final failure):
-        logFailure('vitalia.alarm', failure);
+        logFailure('mamiro.alarm', failure);
         state = AsyncData(alarm.copyWith(actionFailure: failure));
     }
   }

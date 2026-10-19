@@ -1,3 +1,3 @@
-import 'package:vitalia/bootstrap.dart';
+import 'package:mamiro/bootstrap.dart';
 
 Future<void> main() => bootstrap();

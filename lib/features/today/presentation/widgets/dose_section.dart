@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/features/today/presentation/widgets/dose_tile.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/features/today/presentation/widgets/dose_tile.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
 
 final class DoseSection extends StatelessWidget {
   const DoseSection({

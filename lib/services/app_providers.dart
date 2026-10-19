@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/id_generator.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/schedule.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/providers.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/id_generator.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/schedule.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/providers.dart';
 
 final clockProvider = Provider<Clock>(
   (ref) => throw UnimplementedError('Override clockProvider in bootstrap'),
@@ -49,7 +49,7 @@ final doseEventsProvider =
         now.month,
         now.day,
       ).subtract(doseEventLookback);
-      return ref.watch(vitaliaRepositoryProvider).watchDoseEventsSince(from);
+      return ref.watch(mamiroRepositoryProvider).watchDoseEventsSince(from);
     });
 
 final class TestAlarmNotifier extends Notifier<bool> {

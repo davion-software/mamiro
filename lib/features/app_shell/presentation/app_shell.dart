@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitalia/routing/routes.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/routing/routes.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class AppShell extends StatelessWidget {
   const AppShell({required this.navigationShell, super.key});
@@ -12,13 +12,13 @@ final class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final index = navigationShell.currentIndex;
     return Scaffold(
-      backgroundColor: VitaliaPalette.paper,
+      backgroundColor: MamiroPalette.paper,
       body: SafeArea(child: navigationShell),
       floatingActionButton: index == 1
           ? FloatingActionButton.extended(
               onPressed: () => context.push(Routes.newMedication),
-              backgroundColor: VitaliaPalette.sage,
-              foregroundColor: VitaliaPalette.paper,
+              backgroundColor: MamiroPalette.sage,
+              foregroundColor: MamiroPalette.paper,
               icon: const Icon(Icons.add),
               label: const Text('Add'),
             )

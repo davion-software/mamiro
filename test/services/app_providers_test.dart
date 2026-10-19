@@ -1,7 +1,7 @@
 import 'package:clock/clock.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitalia/services/app_providers.dart';
+import 'package:mamiro/services/app_providers.dart';
 
 void main() {
   testWidgets('the minute clock emits only at the next minute boundary', (

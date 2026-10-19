@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/storage_failure.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/storage_failure.dart';
 
 AsyncValue<(A, B)> combineAsync2<A, B>(
   AsyncValue<A> first,

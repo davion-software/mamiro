@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/services/app_providers.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/services/app_providers.dart';
 
 enum SettingsNotice { demoRestored, cleared }
 
@@ -76,7 +76,7 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
   void restoreDemo() {
     unawaited(
       _restoreDemo().catchError(
-        unexpectedLogger('vitalia.settings', 'settings.intent'),
+        unexpectedLogger('mamiro.settings', 'settings.intent'),
       ),
     );
   }
@@ -84,7 +84,7 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
   void clearAll() {
     unawaited(
       _clearAll().catchError(
-        unexpectedLogger('vitalia.settings', 'settings.intent'),
+        unexpectedLogger('mamiro.settings', 'settings.intent'),
       ),
     );
   }
@@ -94,13 +94,13 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
     if (current == null) return;
     unawaited(
       _persistSettings(change(current))
-          .catchError(unexpectedLogger('vitalia.settings', 'settings.intent')),
+          .catchError(unexpectedLogger('mamiro.settings', 'settings.intent')),
     );
   }
 
   Future<void> _persistSettings(AppSettings settings) async {
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .updateSettings(settings);
     if (!ref.mounted) return;
     _applyWrite(result);
@@ -108,7 +108,7 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
 
   Future<void> _restoreDemo() async {
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .restoreDemo(ref.read(clockProvider).now());
     if (!ref.mounted) return;
     _applyWrite(result, notice: SettingsNotice.demoRestored);
@@ -116,7 +116,7 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
 
   Future<void> _clearAll() async {
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .clearAll(ref.read(clockProvider).now());
     if (!ref.mounted) return;
     _applyWrite(result, notice: SettingsNotice.cleared);
@@ -132,7 +132,7 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
           ref.read(settingsFeedbackProvider.notifier).succeed(notice);
         }
       case Err(:final failure):
-        logFailure('vitalia.settings', failure);
+        logFailure('mamiro.settings', failure);
         ref.read(settingsFeedbackProvider.notifier).fail(failure);
     }
   }

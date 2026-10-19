@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class BannerStrip extends StatelessWidget {
   const BannerStrip({required this.text, super.key});
@@ -10,7 +10,7 @@ final class BannerStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: VitaliaPalette.sageMist,
+        color: MamiroPalette.sageMist,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Padding(
@@ -18,7 +18,7 @@ final class BannerStrip extends StatelessWidget {
         child: Text(
           text,
           style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: VitaliaPalette.sage),
+              ?.copyWith(color: MamiroPalette.sage),
         ),
       ),
     );

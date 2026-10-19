@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
 class PaperCard extends StatelessWidget {
   const PaperCard({
@@ -18,10 +18,10 @@ class PaperCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final body = Padding(padding: padding, child: child);
     return Material(
-      color: VitaliaPalette.paperDeep,
+      color: MamiroPalette.paperDeep,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: VitaliaPalette.line),
+        side: const BorderSide(color: MamiroPalette.line),
       ),
       child: onTap == null
           ? body

@@ -1,7 +1,7 @@
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/snapshot.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/snapshot.dart';
 
 Map<String, Object?> encodeLegacySnapshot(Snapshot snapshot) => {
   'initialized': snapshot.initialized,

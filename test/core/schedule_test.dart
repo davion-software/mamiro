@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/schedule.dart';
-import 'package:vitalia/data/demo_cabinet.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/schedule.dart';
+import 'package:mamiro/data/demo_cabinet.dart';
 
 void main() {
   final medications = demoCabinet();

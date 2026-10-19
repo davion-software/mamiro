@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitalia/features/today/presentation/today_notifier.dart';
-import 'package:vitalia/features/today/presentation/widgets/banner_strip.dart';
-import 'package:vitalia/features/today/presentation/widgets/dose_section.dart';
-import 'package:vitalia/features/today/presentation/widgets/refill_card.dart';
-import 'package:vitalia/features/today/presentation/widgets/taken_ring.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/async_page.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/storage_banner.dart';
+import 'package:mamiro/features/today/presentation/today_notifier.dart';
+import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
+import 'package:mamiro/features/today/presentation/widgets/dose_section.dart';
+import 'package:mamiro/features/today/presentation/widgets/refill_card.dart';
+import 'package:mamiro/features/today/presentation/widgets/taken_ring.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/async_page.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/storage_banner.dart';
 
 final class TodayScreen extends ConsumerWidget {
   const TodayScreen({super.key});
@@ -86,7 +86,7 @@ final class _TodayContent extends StatelessWidget {
                           ? 'Add a medication to start the day.'
                           : 'Nothing scheduled today.',
                       style: Theme.of(context).textTheme.bodyLarge
-                          ?.copyWith(color: VitaliaPalette.inkSoft),
+                          ?.copyWith(color: MamiroPalette.inkSoft),
                     ),
                   ],
                 ],
@@ -142,7 +142,7 @@ final class _TodayHeader extends StatelessWidget {
               Text(
                 'Never miss a dose.',
                 style: Theme.of(context).textTheme.bodyLarge
-                    ?.copyWith(color: VitaliaPalette.inkSoft),
+                    ?.copyWith(color: MamiroPalette.inkSoft),
               ),
               const SizedBox(height: 4),
               Text(

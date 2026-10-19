@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
-ThemeData vitaliaTheme() {
-  const ink = VitaliaPalette.ink;
-  const paper = VitaliaPalette.paper;
-  const sage = VitaliaPalette.sage;
+ThemeData mamiroTheme() {
+  const ink = MamiroPalette.ink;
+  const paper = MamiroPalette.paper;
+  const sage = MamiroPalette.sage;
   const textTheme = TextTheme(
     displayLarge: TextStyle(
       fontFamily: 'Fraunces',
@@ -60,7 +60,7 @@ ThemeData vitaliaTheme() {
       fontWeight: FontWeight.w400,
       fontSize: 14,
       height: 1.45,
-      color: VitaliaPalette.inkSoft,
+      color: MamiroPalette.inkSoft,
     ),
     labelLarge: TextStyle(
       fontFamily: 'Outfit',
@@ -87,7 +87,7 @@ ThemeData vitaliaTheme() {
     onSurface: ink,
     error: Color(0xFF9B4030),
     onError: paper,
-    outline: VitaliaPalette.line,
+    outline: MamiroPalette.line,
   );
 
   return ThemeData(
@@ -114,27 +114,27 @@ ThemeData vitaliaTheme() {
       backgroundColor: paper,
       elevation: 0,
       height: 72,
-      indicatorColor: VitaliaPalette.sageMist,
+      indicatorColor: MamiroPalette.sageMist,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return TextStyle(
           fontFamily: 'Outfit',
           fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
           fontSize: 12,
-          color: selected ? sage : VitaliaPalette.inkSoft,
+          color: selected ? sage : MamiroPalette.inkSoft,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return IconThemeData(
-          color: selected ? sage : VitaliaPalette.inkSoft,
+          color: selected ? sage : MamiroPalette.inkSoft,
           size: 22,
         );
       }),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: VitaliaPalette.paperDeep,
+      fillColor: MamiroPalette.paperDeep,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
@@ -145,17 +145,17 @@ ThemeData vitaliaTheme() {
       ),
       labelStyle: const TextStyle(
         fontFamily: 'Outfit',
-        color: VitaliaPalette.inkSoft,
+        color: MamiroPalette.inkSoft,
       ),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) return paper;
-        return VitaliaPalette.inkSoft;
+        return MamiroPalette.inkSoft;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) return sage;
-        return VitaliaPalette.line;
+        return MamiroPalette.line;
       }),
     ),
     filledButtonTheme: FilledButtonThemeData(
@@ -204,7 +204,7 @@ ThemeData vitaliaTheme() {
       contentTextStyle: const TextStyle(
         fontFamily: 'Outfit',
         fontSize: 15,
-        color: VitaliaPalette.inkSoft,
+        color: MamiroPalette.inkSoft,
         height: 1.4,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
@@ -219,7 +219,7 @@ ThemeData vitaliaTheme() {
       backgroundColor: paper,
       dialHandColor: sage,
       hourMinuteTextColor: ink,
-      dayPeriodColor: VitaliaPalette.sageMist,
+      dayPeriodColor: MamiroPalette.sageMist,
     ),
   );
 }

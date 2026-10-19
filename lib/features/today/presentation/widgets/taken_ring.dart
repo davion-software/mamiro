@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'package:vitalia/theme/palette.dart';
+import 'package:mamiro/theme/palette.dart';
 
 final class TakenRing extends StatelessWidget {
   const TakenRing({
@@ -30,7 +30,7 @@ final class TakenRing extends StatelessWidget {
               fontFamily: 'Fraunces',
               fontWeight: FontWeight.w600,
               fontSize: 16,
-              color: VitaliaPalette.ink,
+              color: MamiroPalette.ink,
             ),
           ),
         ),
@@ -49,11 +49,11 @@ class _RingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 5;
     final background = Paint()
-      ..color = VitaliaPalette.sageMist
+      ..color = MamiroPalette.sageMist
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7;
     final foreground = Paint()
-      ..color = VitaliaPalette.sage
+      ..color = MamiroPalette.sage
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7
       ..strokeCap = StrokeCap.round;

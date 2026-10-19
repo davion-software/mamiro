@@ -1,8 +1,8 @@
-import 'package:vitalia/core/adherence.dart';
-import 'package:vitalia/core/day_summary.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/medication.dart';
+import 'package:mamiro/core/adherence.dart';
+import 'package:mamiro/core/day_summary.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/medication.dart';
 
 const missAfter = Duration(hours: 2);
 const doseEventLookback = Duration(days: 400);

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitalia/routing/routes.dart';
+import 'package:mamiro/routing/routes.dart';
 
 final class ErrorScreen extends StatelessWidget {
   const ErrorScreen({required this.message, super.key});

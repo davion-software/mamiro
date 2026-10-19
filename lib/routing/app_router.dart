@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitalia/features/app_shell/presentation/app_shell.dart';
-import 'package:vitalia/features/history/presentation/history_screen.dart';
-import 'package:vitalia/features/medications/presentation/medication_editor_screen.dart';
-import 'package:vitalia/features/medications/presentation/medications_screen.dart';
-import 'package:vitalia/features/settings/presentation/settings_screen.dart';
-import 'package:vitalia/features/today/presentation/today_screen.dart';
-import 'package:vitalia/routing/error_screen.dart';
-import 'package:vitalia/routing/routes.dart';
+import 'package:mamiro/features/app_shell/presentation/app_shell.dart';
+import 'package:mamiro/features/history/presentation/history_screen.dart';
+import 'package:mamiro/features/medications/presentation/medication_editor_screen.dart';
+import 'package:mamiro/features/medications/presentation/medications_screen.dart';
+import 'package:mamiro/features/settings/presentation/settings_screen.dart';
+import 'package:mamiro/features/today/presentation/today_screen.dart';
+import 'package:mamiro/routing/error_screen.dart';
+import 'package:mamiro/routing/routes.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(

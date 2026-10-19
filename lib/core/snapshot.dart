@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/medication.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/medication.dart';
 
 @immutable
 final class Snapshot {

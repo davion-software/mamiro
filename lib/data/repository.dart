@@ -5,25 +5,25 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqlite3/sqlite3.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/snapshot.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/app_database.dart';
-import 'package:vitalia/data/demo_cabinet.dart';
-import 'package:vitalia/data/legacy_snapshot_codec.dart';
-import 'package:vitalia/data/row_mapping.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/snapshot.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/app_database.dart';
+import 'package:mamiro/data/demo_cabinet.dart';
+import 'package:mamiro/data/legacy_snapshot_codec.dart';
+import 'package:mamiro/data/row_mapping.dart';
 
-final class VitaliaRepository {
-  VitaliaRepository(this._database, {SharedPreferences? legacyPreferences}) {
+final class MamiroRepository {
+  MamiroRepository(this._database, {SharedPreferences? legacyPreferences}) {
     _legacyPreferences = legacyPreferences;
   }
 
-  static const legacySnapshotKey = 'vitalia.snapshot.v1';
+  static const legacySnapshotKey = 'mamiro.snapshot.v1';
   static const _initializedKey = 'database.initialized';
 
   final AppDatabase _database;
@@ -59,10 +59,10 @@ final class VitaliaRepository {
         yield Ok([for (final row in rows) doseEventFromRow(row)]);
       }
     } on SqliteException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'events.watch.sqlite', error, stack);
+      logUnexpected('mamiro.storage', 'events.watch.sqlite', error, stack);
       yield const Err(StorageUnavailable());
     } on FormatException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'events.watch.format', error, stack);
+      logUnexpected('mamiro.storage', 'events.watch.format', error, stack);
       yield const Err(StorageCorrupt());
     }
   }
@@ -89,10 +89,10 @@ final class VitaliaRepository {
         ),
       );
     } on SqliteException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'snapshot.read.sqlite', error, stack);
+      logUnexpected('mamiro.storage', 'snapshot.read.sqlite', error, stack);
       return const Err(StorageUnavailable());
     } on FormatException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'snapshot.read.format', error, stack);
+      logUnexpected('mamiro.storage', 'snapshot.read.format', error, stack);
       return const Err(StorageCorrupt());
     }
   }
@@ -277,10 +277,10 @@ final class VitaliaRepository {
         yield Ok(await load());
       }
     } on SqliteException catch (error, stack) {
-      logUnexpected('vitalia.storage', sqliteOp, error, stack);
+      logUnexpected('mamiro.storage', sqliteOp, error, stack);
       yield const Err(StorageUnavailable());
     } on FormatException catch (error, stack) {
-      logUnexpected('vitalia.storage', formatOp, error, stack);
+      logUnexpected('mamiro.storage', formatOp, error, stack);
       yield const Err(StorageCorrupt());
     }
   }
@@ -453,14 +453,14 @@ final class VitaliaRepository {
       }
       return Ok(decodeLegacySnapshot(decoded));
     } on FormatException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'legacy.decode', error, stack);
+      logUnexpected('mamiro.storage', 'legacy.decode', error, stack);
       return const Err(StorageCorrupt());
     } on PlatformException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'legacy.read.plugin', error, stack);
+      logUnexpected('mamiro.storage', 'legacy.read.plugin', error, stack);
       return const Err(StorageUnavailable());
     } on MissingPluginException catch (error, stack) {
       logUnexpected(
-        'vitalia.storage',
+        'mamiro.storage',
         'legacy.read.missing_plugin',
         error,
         stack,
@@ -476,7 +476,7 @@ final class VitaliaRepository {
       )..where((item) => item.key.equals(_initializedKey))).getSingleOrNull();
       return Ok(row != null);
     } on SqliteException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'initialize.read', error, stack);
+      logUnexpected('mamiro.storage', 'initialize.read', error, stack);
       return const Err(StorageUnavailable());
     }
   }
@@ -488,11 +488,11 @@ final class VitaliaRepository {
       await preferences.remove(legacySnapshotKey);
       return const Ok(null);
     } on PlatformException catch (error, stack) {
-      logUnexpected('vitalia.storage', 'legacy.remove.plugin', error, stack);
+      logUnexpected('mamiro.storage', 'legacy.remove.plugin', error, stack);
       return const Err(StorageUnavailable());
     } on MissingPluginException catch (error, stack) {
       logUnexpected(
-        'vitalia.storage',
+        'mamiro.storage',
         'legacy.remove.missing_plugin',
         error,
         stack,
@@ -509,7 +509,7 @@ final class VitaliaRepository {
       await action();
       return const Ok(null);
     } on SqliteException catch (error, stack) {
-      logUnexpected('vitalia.storage', operation, error, stack);
+      logUnexpected('mamiro.storage', operation, error, stack);
       return Err(StorageConstraintViolation(operation));
     }
   }

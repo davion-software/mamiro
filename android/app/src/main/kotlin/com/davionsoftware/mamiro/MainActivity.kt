@@ -1,4 +1,4 @@
-package com.davionsoftware.vitalia
+package com.davionsoftware.mamiro
 
 import io.flutter.embedding.android.FlutterActivity
 

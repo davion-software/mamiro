@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:vitalia/core/format.dart';
-import 'package:vitalia/core/dose_slot.dart';
-import 'package:vitalia/theme/palette.dart';
-import 'package:vitalia/theme/widgets/paper_card.dart';
-import 'package:vitalia/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/core/format.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/paper_card.dart';
+import 'package:mamiro/theme/widgets/pill_glyph.dart';
 
 final class DoseTile extends StatelessWidget {
   const DoseTile({
@@ -104,15 +104,15 @@ final class DoseTile extends StatelessWidget {
   Color _statusColor() {
     switch (slot.status) {
       case SlotStatus.due:
-        return VitaliaPalette.sage;
+        return MamiroPalette.sage;
       case SlotStatus.missed:
-        return VitaliaPalette.terracotta;
+        return MamiroPalette.terracotta;
       case SlotStatus.taken:
-        return VitaliaPalette.sage;
+        return MamiroPalette.sage;
       case SlotStatus.skipped:
       case SlotStatus.later:
       case SlotStatus.snoozed:
-        return VitaliaPalette.inkSoft;
+        return MamiroPalette.inkSoft;
     }
   }
 }

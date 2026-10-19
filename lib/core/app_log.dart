@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 
-import 'package:vitalia/core/storage_failure.dart';
+import 'package:mamiro/core/storage_failure.dart';
 
 void logUnexpected(
   String name,

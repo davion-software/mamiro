@@ -3,15 +3,15 @@ import 'dart:convert';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vitalia/core/app_settings.dart';
-import 'package:vitalia/core/dose_event.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/snapshot.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/app_database.dart';
-import 'package:vitalia/data/legacy_snapshot_codec.dart';
-import 'package:vitalia/data/repository.dart';
+import 'package:mamiro/core/app_settings.dart';
+import 'package:mamiro/core/dose_event.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/snapshot.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/app_database.dart';
+import 'package:mamiro/data/legacy_snapshot_codec.dart';
+import 'package:mamiro/data/repository.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +22,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
 
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
     final result = await repository.readSnapshot();
@@ -46,7 +46,7 @@ void main() {
       SharedPreferences.setMockInitialValues({});
       final database = AppDatabase(NativeDatabase.memory());
       addTearDown(database.close);
-      final repository = VitaliaRepository(database);
+      final repository = MamiroRepository(database);
       expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
       final initial = await repository.readSnapshot();
       final snapshot = switch (initial) {
@@ -85,14 +85,14 @@ void main() {
     () async {
       final legacy = Snapshot.empty.copyWith(medications: [demoMedication]);
       SharedPreferences.setMockInitialValues({
-        VitaliaRepository.legacySnapshotKey: jsonEncode(
+        MamiroRepository.legacySnapshotKey: jsonEncode(
           encodeLegacySnapshot(legacy),
         ),
       });
       final preferences = await SharedPreferences.getInstance();
       final database = AppDatabase(NativeDatabase.memory());
       addTearDown(database.close);
-      final repository = VitaliaRepository(
+      final repository = MamiroRepository(
         database,
         legacyPreferences: preferences,
       );
@@ -105,10 +105,7 @@ void main() {
         case Err(:final failure):
           fail('Unexpected storage failure: ${failure.code}');
       }
-      expect(
-        preferences.getString(VitaliaRepository.legacySnapshotKey),
-        isNull,
-      );
+      expect(preferences.getString(MamiroRepository.legacySnapshotKey), isNull);
     },
   );
 
@@ -116,7 +113,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
 
     expect(
@@ -132,7 +129,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
 
     expect(
@@ -153,7 +150,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     final database = AppDatabase(NativeDatabase.memory());
     addTearDown(database.close);
-    final repository = VitaliaRepository(database);
+    final repository = MamiroRepository(database);
     expect(await repository.initialize(), isA<Ok<void, StorageFailure>>());
     final snapshot = switch (await repository.readSnapshot()) {
       Ok(:final value) => value,

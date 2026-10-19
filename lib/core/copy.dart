@@ -1,4 +1,4 @@
-import 'package:vitalia/core/storage_failure.dart';
+import 'package:mamiro/core/storage_failure.dart';
 
 String storageFailureMessage(StorageFailure failure) {
   switch (failure) {

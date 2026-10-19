@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
-import 'package:vitalia/core/app_log.dart';
-import 'package:vitalia/core/format.dart';
-import 'package:vitalia/core/medication.dart';
-import 'package:vitalia/core/result.dart';
-import 'package:vitalia/core/storage_failure.dart';
-import 'package:vitalia/data/providers.dart';
-import 'package:vitalia/services/app_providers.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/core/format.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/result.dart';
+import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/services/app_providers.dart';
 
 @immutable
 final class MedicationItemState {
@@ -99,7 +99,7 @@ final class MedicationsNotifier extends Notifier<AsyncValue<MedicationsState>> {
   void save(Medication medication) {
     unawaited(
       _save(medication).catchError(
-        unexpectedLogger('vitalia.medications', 'medications.intent'),
+        unexpectedLogger('mamiro.medications', 'medications.intent'),
       ),
     );
   }
@@ -107,14 +107,14 @@ final class MedicationsNotifier extends Notifier<AsyncValue<MedicationsState>> {
   void delete(String id) {
     unawaited(
       _delete(id).catchError(
-        unexpectedLogger('vitalia.medications', 'medications.intent'),
+        unexpectedLogger('mamiro.medications', 'medications.intent'),
       ),
     );
   }
 
   Future<void> _save(Medication medication) async {
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .upsertMedication(medication, ref.read(clockProvider).now());
     if (!ref.mounted) return;
     _applyWrite(result);
@@ -122,7 +122,7 @@ final class MedicationsNotifier extends Notifier<AsyncValue<MedicationsState>> {
 
   Future<void> _delete(String id) async {
     final result = await ref
-        .read(vitaliaRepositoryProvider)
+        .read(mamiroRepositoryProvider)
         .softDeleteMedication(id, ref.read(clockProvider).now());
     if (!ref.mounted) return;
     _applyWrite(result);
@@ -133,7 +133,7 @@ final class MedicationsNotifier extends Notifier<AsyncValue<MedicationsState>> {
       case Ok():
         ref.read(medicationsFeedbackProvider.notifier).pop();
       case Err(:final failure):
-        logFailure('vitalia.medications', failure);
+        logFailure('mamiro.medications', failure);
         ref.read(medicationsFeedbackProvider.notifier).fail(failure);
     }
   }
