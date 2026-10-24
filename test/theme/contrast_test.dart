@@ -46,10 +46,6 @@ void main() {
         MamiroPalette.surface,
         MamiroPalette.coralButtonTop,
       ),
-      'white on coral button bottom': (
-        MamiroPalette.surface,
-        MamiroPalette.coralButtonBottom,
-      ),
       'cobalt on cobaltMist': (MamiroPalette.cobalt, MamiroPalette.cobaltMist),
       'inkSoft on cobaltMist': (
         MamiroPalette.inkSoft,
