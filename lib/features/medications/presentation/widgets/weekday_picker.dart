@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/palette.dart';
-
-const weekdayLabels = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 final class WeekdayPicker extends StatelessWidget {
   const WeekdayPicker({required this.days, required this.onToggle, super.key});
@@ -18,7 +17,7 @@ final class WeekdayPicker extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 2),
               child: _DayChip(
-                label: weekdayLabels[weekday - 1],
+                label: context.formats.weekdayShort(weekday),
                 selected: days.contains(weekday),
                 onTap: () => onToggle(weekday),
               ),
@@ -43,8 +42,13 @@ final class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? MamiroPalette.sage : MamiroPalette.paperDeep,
-      borderRadius: BorderRadius.circular(12),
+      color: selected ? MamiroPalette.cobalt : MamiroPalette.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: selected ? MamiroPalette.cobalt : MamiroPalette.outlineStrong,
+        ),
+      ),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -54,10 +58,10 @@ final class _DayChip extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                fontFamily: 'Outfit',
+                fontFamily: MamiroPalette.fontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? MamiroPalette.paper : MamiroPalette.ink,
+                color: selected ? MamiroPalette.surface : MamiroPalette.ink,
               ),
             ),
           ),

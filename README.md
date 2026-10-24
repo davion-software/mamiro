@@ -6,16 +6,23 @@ Private rhythm keeper for iOS and Android. No accounts. No backend. Data stays o
 
 ## What it does
 
-Tell Mamiro what you take, when, and on which days. Today's slots sit in Later until the clock catches them. At dose time a full-screen alarm holds until you Take, Snooze, or Skip. Missed doses stay on Today for two hours past the scheduled time, then remain so you can still Take or Skip.
+Tell Mamiro what you take, when, and on which days. Today shows the next doses up top, grouped by time, with the rest of the day below. At dose time a full-screen alarm holds until you Take, Snooze, or Skip, and doses due together can be taken at once. Doses stay due for two hours past the scheduled time, then show as missed so you can still Take or Skip. Any Take or Skip can be undone.
 
-Alarms work while the app is open. The OS will not wake a killed Mamiro process.
+The app follows the device language (English or Spanish) and its 12/24-hour setting.
+
+Alarms ring even when Mamiro is closed. The next week of doses (up to 48 alarms) is handed to the OS scheduler and re-synced whenever the cabinet, the log, or settings change, and each time the app opens. Take, Snooze, and Skip work straight from the alarm without opening the app.
+
+- **Android** — an exact `setAlarmClock` alarm that shows full screen over the lock screen and repeats its alarm-volume tone until handled or the dose turns missed. Exact timing and full-screen alarms can be granted under Settings → Alarm access; without exact timing alarms may arrive a few minutes late. Alarms survive reboots.
+- **iOS** — a time-sensitive notification with the default sound. iOS does not allow third-party apps to ring continuously or take over the lock screen.
+
+While the app is open, the in-app alarm takes over and silences the OS alarm.
 
 ## Tabs
 
-- **Today** — due now, later, and already done, with a taken/total ring and a refill-soon strip
+- **Today** — due now, next, later, and done (with undo), a taken/total ring, and a refill strip with Restock
 - **Meds** — the cabinet: add, edit, delete
-- **History** — this week's adherence, clean-day streak, last 7 days, recent log
-- **Settings** — sound, vibration, banners, snooze length, test alarm, restore demo cabinet, clear data
+- **History** — adherence and day-by-day marks for the last 7 days (tap a day for its doses), clean-day streak, and a log grouped by day. Days before a medication was added are not counted
+- **Settings** — alarm access, sound, vibration, banners, snooze length, test alarms (in app or with the app closed), and an Advanced section to restore the demo cabinet or clear data
 
 ## Requirements
 
@@ -59,8 +66,9 @@ lib/bootstrap.dart            Composition root and provider overrides
 lib/app.dart                  MaterialApp.router and lifecycle handling
 lib/core/                     Pure values, typed results, scheduling rules
 lib/data/                     Drift schema, repository, migration boundary
-lib/services/                 Injectable clock and ID providers
+lib/services/                 Injectable clock, ID, and OS alarm providers
 lib/routing/                  Single GoRouter and typed route locations
+lib/l10n/                     ARB strings (en, es), generated localizations, formats
 lib/theme/                    Theme tokens and reusable visual components
 lib/features/*/presentation/  Consumer views and Riverpod Notifiers
 test/                         Tests mirroring the production structure

@@ -44,6 +44,7 @@ final class Medication {
     required this.daysOfWeek,
     this.quantity,
     this.refillThreshold,
+    this.startsOn,
   });
 
   final String id;
@@ -56,6 +57,9 @@ final class Medication {
   final List<int> daysOfWeek;
   final int? quantity;
   final int? refillThreshold;
+
+  /// First day doses are expected. Days before it count only if logged.
+  final DateTime? startsOn;
 
   bool get tracksPills => quantity != null;
 
@@ -89,6 +93,7 @@ final class Medication {
       refillThreshold: clearQuantity
           ? null
           : (refillThreshold ?? this.refillThreshold),
+      startsOn: startsOn,
     );
   }
 

@@ -18,6 +18,10 @@ bool sameMinute(DateTime a, DateTime b) {
 }
 
 bool runsOn(Medication medication, DateTime day) {
+  final startsOn = medication.startsOn;
+  if (startsOn != null && dateOnly(day).isBefore(dateOnly(startsOn))) {
+    return false;
+  }
   if (medication.daysOfWeek.isEmpty) return true;
   return medication.daysOfWeek.contains(day.weekday);
 }
@@ -105,7 +109,7 @@ List<DoseSlot> _slotsForDay({
 }) {
   final slots = <DoseSlot>[];
   for (final medication in medications) {
-    if (!runsOn(medication, day)) continue;
+    final scheduled = runsOn(medication, day);
     for (final minutes in medication.timesMinutes) {
       final scheduledAt = combine(day, minutes);
       final slotEvents = eventsForSlot(
@@ -113,9 +117,19 @@ List<DoseSlot> _slotsForDay({
         medication.id,
         scheduledAt,
       );
+      // Before a medication starts, only doses someone logged still count.
+      if (!scheduled && slotEvents.isEmpty) continue;
+      if (!scheduled && !_runsOnWeekday(medication, day)) continue;
       final snoozes = slotEvents.where(
         (event) => event.action == DoseAction.snoozed,
       );
+      final resolution = slotEvents
+          .where(
+            (event) =>
+                event.action == DoseAction.taken ||
+                event.action == DoseAction.skipped,
+          )
+          .firstOrNull;
       slots.add(
         DoseSlot(
           medication: medication,
@@ -126,6 +140,7 @@ List<DoseSlot> _slotsForDay({
             events: slotEvents,
           ),
           snoozeUntil: snoozes.isEmpty ? null : snoozes.last.snoozeUntil,
+          resolvedAt: resolution?.at,
         ),
       );
     }
@@ -136,6 +151,11 @@ List<DoseSlot> _slotsForDay({
     return a.medication.name.compareTo(b.medication.name);
   });
   return slots;
+}
+
+bool _runsOnWeekday(Medication medication, DateTime day) {
+  return medication.daysOfWeek.isEmpty ||
+      medication.daysOfWeek.contains(day.weekday);
 }
 
 DateTime nextAlarmChange({
@@ -301,6 +321,6 @@ List<DaySummary> lastSevenDays({
       day: day,
       now: now,
     );
-    return DaySummary(day: day, mark: markFor(slots));
+    return DaySummary(day: day, mark: markFor(slots), slots: slots);
   });
 }

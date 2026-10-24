@@ -6,7 +6,6 @@ import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/app_settings.dart';
 import 'package:mamiro/core/dose_event.dart';
 import 'package:mamiro/core/dose_slot.dart';
-import 'package:mamiro/core/format.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/schedule.dart';
@@ -20,20 +19,26 @@ final class AlarmState {
   const AlarmState({
     required this.slot,
     required this.settings,
-    required this.clockLabel,
+    required this.now,
+    this.dueSlots = const [],
     this.actionFailure,
   });
 
+  /// The dose on screen.
   final DoseSlot slot;
+
+  /// Every dose due right now, [slot] first.
+  final List<DoseSlot> dueSlots;
   final AppSettings settings;
-  final String clockLabel;
+  final DateTime now;
   final StorageFailure? actionFailure;
 
   AlarmState copyWith({StorageFailure? actionFailure}) {
     return AlarmState(
       slot: slot,
+      dueSlots: dueSlots,
       settings: settings,
-      clockLabel: clockLabel,
+      now: now,
       actionFailure: actionFailure,
     );
   }
@@ -87,7 +92,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
         isTest: true,
       ),
       settings: settings,
-      clockLabel: formatClock(now),
+      now: now,
     );
   }
 
@@ -131,6 +136,35 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
         DoseAction.taken,
       ).catchError(unexpectedLogger('mamiro.alarm', 'alarm.intent')),
     );
+  }
+
+  /// Takes every dose that is due now, the one on screen included.
+  void takeAll() {
+    unawaited(
+      _takeAll().catchError(unexpectedLogger('mamiro.alarm', 'alarm.intent')),
+    );
+  }
+
+  Future<void> _takeAll() async {
+    final alarm = state.value;
+    if (alarm == null || alarm.slot.isTest) return;
+    final now = ref.read(clockProvider).now();
+    for (final slot in alarm.dueSlots) {
+      final result = await ref
+          .read(mamiroRepositoryProvider)
+          .recordSlot(
+            slot: slot,
+            action: DoseAction.taken,
+            now: now,
+            eventId: ref.read(idGeneratorProvider)(),
+          );
+      if (!ref.mounted) return;
+      if (result case Err(:final failure)) {
+        logFailure('mamiro.alarm', failure);
+        state = AsyncData(alarm.copyWith(actionFailure: failure));
+        return;
+      }
+    }
   }
 
   void skip(String slotId) {
@@ -189,14 +223,13 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
       day: now,
       now: now,
     );
-    final due = slots
-        .where((slot) => slot.status == SlotStatus.due)
-        .firstOrNull;
-    if (due == null) return null;
+    final due = slots.where((slot) => slot.status == SlotStatus.due).toList();
+    if (due.isEmpty) return null;
     return AlarmState(
-      slot: due,
+      slot: due.first,
+      dueSlots: due,
       settings: settings,
-      clockLabel: formatClock(now),
+      now: now,
     );
   }
 }

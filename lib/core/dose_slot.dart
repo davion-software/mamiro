@@ -13,12 +13,14 @@ String minuteStamp(DateTime value) {
   return '$year-$month-${day}T$hour:$minute';
 }
 
+const testAlarmSlotKey = 'test-alarm';
+
 String doseSlotKey({
   required String medicationId,
   required DateTime scheduledAt,
   bool isTest = false,
 }) {
-  if (isTest) return 'test-alarm';
+  if (isTest) return testAlarmSlotKey;
   return '$medicationId@${minuteStamp(scheduledAt)}';
 }
 
@@ -29,6 +31,7 @@ final class DoseSlot {
     required this.scheduledAt,
     required this.status,
     this.snoozeUntil,
+    this.resolvedAt,
     this.isTest = false,
   });
 
@@ -36,6 +39,9 @@ final class DoseSlot {
   final DateTime scheduledAt;
   final SlotStatus status;
   final DateTime? snoozeUntil;
+
+  /// When the dose was taken or skipped.
+  final DateTime? resolvedAt;
   final bool isTest;
 
   String get id => doseSlotKey(

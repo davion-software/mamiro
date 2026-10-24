@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/features/medications/presentation/widgets/choice_tile.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
 
 final class ShapePicker extends StatelessWidget {
@@ -31,7 +31,7 @@ final class ShapePicker extends StatelessWidget {
                   children: [
                     PillGlyph(shape: value, color: color, size: 36),
                     const SizedBox(height: 6),
-                    Text(pillShapeName(value)),
+                    Text(context.formats.shape(value)),
                   ],
                 ),
               ),

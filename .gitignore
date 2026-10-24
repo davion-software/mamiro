@@ -83,3 +83,6 @@ ios/**/*sync/
 .build/
 .buildlog/
 .swiftpm/
+
+# Local screenshots and design captures
+/artifacts/

@@ -1,0 +1,345 @@
+{
+  "@@locale": "en",
+  "appTitle": "Mamiro",
+  "navToday": "Today",
+  "navMeds": "Meds",
+  "navHistory": "History",
+  "navSettings": "Settings",
+  "storageUnavailable": "Storage is temporarily unavailable.",
+  "storageCorrupt": "Saved data could not be read.",
+  "storageConstraint": "That change could not be saved.",
+  "storageNotFound": "That item is no longer available.",
+  "todayUnavailable": "Today is temporarily unavailable.",
+  "cabinetUnavailable": "The cabinet is temporarily unavailable.",
+  "historyUnavailable": "History is temporarily unavailable.",
+  "settingsUnavailable": "Settings are temporarily unavailable.",
+  "greetingMorning": "Good morning",
+  "greetingAfternoon": "Good afternoon",
+  "greetingEvening": "Good evening",
+  "todayNextOne": "Next: {name} at {time}",
+  "@todayNextOne": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "todayNextMany": "Next: {count} doses at {time}",
+  "@todayNextMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "todayAllDone": "All done for today",
+  "todayWaiting": "{count, plural, =1{1 dose is waiting} other{{count} doses are waiting}}",
+  "@todayWaiting": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionDueNow": "Due now",
+  "sectionNext": "Next",
+  "sectionLater": "Later today",
+  "sectionDone": "Done",
+  "sectionRefill": "Refill soon",
+  "takeAction": "Take",
+  "takeAll": "Take all ({count})",
+  "@takeAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skipAction": "Skip",
+  "takeEarly": "Take now",
+  "moreActions": "More actions",
+  "statusMissed": "Missed",
+  "statusSnoozedUntil": "Snoozed until {time}",
+  "@statusSnoozedUntil": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "statusTaken": "Taken",
+  "statusSkipped": "Skipped",
+  "statusLater": "Upcoming",
+  "statusDue": "Due now",
+  "statusSnoozed": "Snoozed",
+  "doneTakenAt": "Taken at {time}",
+  "@doneTakenAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo",
+  "pillsLeft": "{count, plural, =1{1 left} other{{count} left}}",
+  "@pillsLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "refillSoonTag": "refill soon",
+  "restock": "Restock",
+  "restockTitle": "Restock {name}",
+  "@restockTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "restockField": "Pills added",
+  "restockConfirm": "Add",
+  "cancel": "Cancel",
+  "emptyCabinetTitle": "Your cabinet is empty.",
+  "emptyCabinetBody": "Add what you take and Mamiro will ring at each dose.",
+  "addMedication": "Add medication",
+  "addShort": "Add",
+  "nothingToday": "Nothing scheduled today.",
+  "alarmDoseDue": "Dose due",
+  "alarmCounter": "{index} of {count}",
+  "@alarmCounter": {
+    "placeholders": {
+      "index": {
+        "type": "int"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "alarmTestLabel": "Test alarm",
+  "alarmOnTime": "Right on time",
+  "alarmLateMinutes": "Scheduled {minutes} min ago",
+  "@alarmLateMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "alarmLateHours": "Scheduled {hours} h {minutes} min ago",
+  "@alarmLateHours": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      },
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "alarmAlsoDue": "Also due: {names}",
+  "@alarmAlsoDue": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "alarmSnooze": "Snooze {minutes} min",
+  "@alarmSnooze": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "snoozeShort": "Snooze",
+  "alarmNotificationTitle": "Time for {name}",
+  "@alarmNotificationTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "channelRingVibrate": "Dose alarms",
+  "channelRing": "Dose alarms (no vibration)",
+  "channelVibrate": "Dose alarms (silent)",
+  "channelQuiet": "Dose alarms (silent, no vibration)",
+  "channelDescription": "Rings at dose time until you take, snooze, or skip",
+  "testNotificationBody": "This is how Mamiro rings at dose time.",
+  "cabinetTitle": "Cabinet",
+  "cabinetSubtitle": "What you take, when, and on which days.",
+  "everyDay": "Every day",
+  "editorAddTitle": "Add medication",
+  "editorEditTitle": "Edit medication",
+  "fieldName": "Name",
+  "nameRequired": "Give it a name",
+  "fieldDosage": "Dosage",
+  "dosageHint": "10 mg",
+  "dosageRequired": "Add a dosage",
+  "fieldNotes": "Notes",
+  "notesHint": "with breakfast",
+  "sectionTimes": "Times",
+  "addTime": "Add time",
+  "timeHelp": "Tap a time to change it.",
+  "timesRequired": "Add at least one time",
+  "sectionDays": "Days",
+  "daysSpecific": "Specific days",
+  "daysRequired": "Pick at least one day",
+  "sectionInventory": "Inventory",
+  "trackPills": "Track remaining pills",
+  "trackPillsHelp": "One pill is subtracted each time you take a dose.",
+  "pillCount": "Pills on hand",
+  "countRequired": "Add a count",
+  "thresholdField": "Remind me to refill at",
+  "thresholdRequired": "Add a refill level",
+  "wholeNumber": "Enter a whole number",
+  "thresholdWarning": "You're already at or below the refill level.",
+  "sectionAppearance": "Appearance",
+  "shapeCapsule": "Capsule",
+  "shapeTablet": "Tablet",
+  "shapeSoftgel": "Softgel",
+  "colorSage": "Sage",
+  "colorMoss": "Moss",
+  "colorTerracotta": "Terracotta",
+  "colorClay": "Clay",
+  "colorSand": "Sand",
+  "colorSlate": "Slate",
+  "colorInk": "Ink",
+  "colorBlush": "Blush",
+  "save": "Save",
+  "deleteMedication": "Delete medication",
+  "deleteTitle": "Remove from the cabinet?",
+  "deleteBody": "{name} will leave Today and its alarms will stop. Past history is kept.",
+  "@deleteBody": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "historyTitle": "Last 7 days",
+  "historyTaken": "{taken} of {total} doses taken",
+  "@historyTaken": {
+    "placeholders": {
+      "taken": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "historyNoData": "No doses to count yet.",
+  "streakNone": "No streak yet",
+  "streakDays": "{count, plural, =1{1 clean day in a row} other{{count} clean days in a row}}",
+  "@streakDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionDayByDay": "Day by day",
+  "legendComplete": "All taken",
+  "legendMixed": "Missed or skipped",
+  "legendPending": "In progress",
+  "legendEmpty": "No doses",
+  "dayHint": "Tap a day to see its doses.",
+  "daySheetEmpty": "No doses were scheduled.",
+  "sectionLog": "Recent log",
+  "logEmpty": "Takes, skips, and snoozes will land here.",
+  "today": "Today",
+  "yesterday": "Yesterday",
+  "logSkippedAt": "Skipped at {time}",
+  "@logSkippedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "logSnoozedAt": "Snoozed at {time}",
+  "@logSnoozedAt": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "logScheduled": "scheduled {time}",
+  "@logScheduled": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsTitle": "Settings",
+  "settingsIntro": "Alarms ring at dose time, even when Mamiro is closed.",
+  "sectionAccess": "Alarm access",
+  "accessNotifications": "Notifications",
+  "accessNotificationsHelp": "Needed to ring while closed",
+  "accessExact": "Exact timing",
+  "accessExactHelp": "Ring on the minute",
+  "accessFullScreen": "Full-screen alarms",
+  "accessFullScreenHelp": "Show over the lock screen. Android can't report this, so check it in system settings.",
+  "allow": "Allow",
+  "open": "Open",
+  "allowed": "Allowed",
+  "sectionAlarm": "Alarm",
+  "sound": "Sound",
+  "soundHelp": "Alarm tone at dose time",
+  "vibration": "Vibration",
+  "vibrationHelp": "Vibrate with the alarm",
+  "banners": "Due-now strip",
+  "bannersHelp": "Show waiting doses at the top of Today",
+  "sectionSnooze": "Snooze length",
+  "minutesShort": "{minutes} min",
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "sectionTest": "Try it",
+  "testNow": "Test alarm now",
+  "testClosed": "Test with the app closed",
+  "testClosedHelp": "Rings in 10 seconds. Close Mamiro to check it.",
+  "testScheduled": "Test alarm set for {time}",
+  "@testScheduled": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "sectionAdvanced": "Advanced",
+  "restoreDemo": "Restore demo cabinet",
+  "clearAll": "Clear all data",
+  "demoRestored": "Demo cabinet restored",
+  "cleared": "All data cleared",
+  "clearTitle": "Clear this device?",
+  "clearBody": "This removes every medication and log from this phone. It cannot be undone.",
+  "clearConfirm": "Clear all",
+  "notFoundTitle": "We couldn't find that screen.",
+  "notFoundBody": "It may have moved. Head back to Today.",
+  "goToday": "Go to Today",
+  "demoVitaminD3": "Vitamin D3",
+  "demoMagnesium": "Magnesium",
+  "demoWithBreakfast": "with breakfast",
+  "demoSameTimes": "same times each day",
+  "demoBeforeBed": "before bed"
+}

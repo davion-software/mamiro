@@ -7,24 +7,30 @@ import 'package:mamiro/core/app_settings.dart';
 import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/storage_failure.dart';
 import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/services/app_providers.dart';
 
-enum SettingsNotice { demoRestored, cleared }
+const closedAppTestDelay = Duration(seconds: 10);
+
+enum SettingsNotice { demoRestored, cleared, testScheduled }
 
 @immutable
 final class SettingsFeedback {
-  const SettingsFeedback({this.notice, this.failure});
+  const SettingsFeedback({this.notice, this.failure, this.testAt});
 
   final SettingsNotice? notice;
   final StorageFailure? failure;
+
+  /// When the closed-app test alarm will ring.
+  final DateTime? testAt;
 }
 
 final class SettingsFeedbackNotifier extends Notifier<SettingsFeedback> {
   @override
   SettingsFeedback build() => const SettingsFeedback();
 
-  void succeed(SettingsNotice notice) =>
-      state = SettingsFeedback(notice: notice);
+  void succeed(SettingsNotice notice, {DateTime? testAt}) =>
+      state = SettingsFeedback(notice: notice, testAt: testAt);
 
   void fail(StorageFailure failure) =>
       state = SettingsFeedback(failure: failure);
@@ -72,6 +78,43 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
       _update((settings) => settings.copyWith(snoozeMinutes: value));
 
   void startTestAlarm() => ref.read(testAlarmProvider.notifier).start();
+
+  /// Rings shortly through the OS, so it can be checked with the app closed.
+  void scheduleClosedAppTest() {
+    final settings = state.value?.settings;
+    if (settings == null) return;
+    final at = ref.read(clockProvider).now().add(closedAppTestDelay);
+    unawaited(
+      ref
+          .read(alarmGatewayProvider)
+          .scheduleTest(at, settings)
+          .then((_) {
+            if (!ref.mounted) return;
+            ref
+                .read(settingsFeedbackProvider.notifier)
+                .succeed(SettingsNotice.testScheduled, testAt: at);
+          })
+          .catchError(unexpectedLogger('mamiro.settings', 'settings.test')),
+    );
+  }
+
+  // Each opens a system screen; access is re-read when the app resumes.
+  void openNotificationSettings() =>
+      _openSystem((gateway) => gateway.openNotificationSettings());
+
+  void requestExactTiming() =>
+      _openSystem((gateway) => gateway.requestExactTiming());
+
+  void requestFullScreen() =>
+      _openSystem((gateway) => gateway.requestFullScreen());
+
+  void _openSystem(Future<void> Function(AlarmGateway gateway) open) {
+    unawaited(
+      open(ref.read(alarmGatewayProvider)).catchError(
+        unexpectedLogger('mamiro.settings', 'settings.alarm_access'),
+      ),
+    );
+  }
 
   void restoreDemo() {
     unawaited(

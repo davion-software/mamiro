@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/core/copy.dart';
 import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 
 final class StorageBanner extends StatelessWidget {
@@ -12,7 +12,7 @@ final class StorageBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return PaperCard(
       child: Text(
-        storageFailureMessage(failure),
+        context.formats.storageFailure(failure),
         style: Theme.of(context).textTheme.bodyLarge
             ?.copyWith(color: Theme.of(context).colorScheme.error),
       ),
@@ -21,6 +21,7 @@ final class StorageBanner extends StatelessWidget {
 }
 
 void showStorageFailureSnackBar(BuildContext context, StorageFailure failure) {
-  ScaffoldMessenger.of(context)
-      .showSnackBar(SnackBar(content: Text(storageFailureMessage(failure))));
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(context.formats.storageFailure(failure))),
+  );
 }

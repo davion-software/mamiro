@@ -40,7 +40,7 @@ void main() {
       container,
       (state) => state.due.isNotEmpty,
     );
-    final slot = initial.due.first;
+    final slot = initial.due.first.slots.first;
     final updatedFuture = _waitForToday(
       container,
       (state) => state.done
@@ -119,24 +119,82 @@ void main() {
 
     final initial = await _waitForToday(
       container,
-      (state) =>
-          state.later.where((slot) => slot.scheduledAt.hour == 8).isNotEmpty,
+      (state) => state.next?.time.hour == 8,
     );
-    final slotId = initial.later
-        .firstWhere((slot) => slot.scheduledAt.hour == 8)
-        .id;
+    final slotId = initial.next!.slots.first.id;
     transitions.clear();
     final updatedFuture = _waitForToday(
       container,
-      (state) => state.due.where((slot) => slot.id == slotId).isNotEmpty,
+      (state) => _waiting(state).where((slot) => slot.id == slotId).isNotEmpty,
     );
 
     ticks.add(DateTime(2026, 8, 26, 8));
 
     final updated = await updatedFuture;
-    expect(updated.due.where((slot) => slot.id == slotId), isNotEmpty);
+    expect(_waiting(updated).where((slot) => slot.id == slotId), isNotEmpty);
     expect(transitions, isNotEmpty);
     expect(transitions.every((state) => !state.isLoading), isTrue);
+  });
+
+  test('take all, undo, and restock keep the count honest', () async {
+    SharedPreferences.setMockInitialValues({});
+    final now = DateTime(2026, 8, 26, 8, 5);
+    final database = AppDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final repository = MamiroRepository(database);
+    expect(
+      await repository.initialize(now: DateTime(2026, 8, 20)),
+      isA<Ok<void, StorageFailure>>(),
+    );
+    var nextId = 0;
+    final container = ProviderContainer(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(database),
+        mamiroRepositoryProvider.overrideWithValue(repository),
+        clockProvider.overrideWithValue(Clock.fixed(now)),
+        idGeneratorProvider.overrideWithValue(() => 'event-${nextId++}'),
+        currentMinuteProvider.overrideWithValue(AsyncData(now)),
+      ],
+    );
+    addTearDown(container.dispose);
+    final notifier = container.read(todayNotifierProvider.notifier);
+
+    final initial = await _waitForToday(
+      container,
+      (state) => state.due.isNotEmpty,
+    );
+    final eight = initial.due.single;
+    expect(eight.slots, hasLength(3));
+
+    notifier.takeAll([for (final slot in eight.slots) slot.id]);
+    final allTaken = await _waitForToday(
+      container,
+      (state) => state.takenCount == 3 && state.refillSoon.single.quantity == 7,
+    );
+    final vitamin = allTaken.done.firstWhere(
+      (slot) => slot.medication.id == 'demo-vitamin-d3',
+    );
+    expect(vitamin.resolvedAt, now);
+    expect(
+      allTaken.refillSoon.single.quantity,
+      7,
+      reason: 'Vitamin D3 started at 8 and one was taken',
+    );
+
+    notifier.undo(vitamin.id);
+    final undone = await _waitForToday(
+      container,
+      (state) => state.takenCount == 2 && state.refillSoon.single.quantity == 8,
+    );
+    expect(_waiting(undone).map((slot) => slot.id), contains(vitamin.id));
+    expect(undone.refillSoon.single.quantity, 8);
+
+    notifier.restock('demo-vitamin-d3', 30);
+    final restocked = await _waitForToday(
+      container,
+      (state) => state.refillSoon.isEmpty,
+    );
+    expect(restocked.next?.time, DateTime(2026, 8, 26, 20));
   });
 }
 
@@ -163,3 +221,7 @@ Future<TodayState> _waitForToday(
     subscription.close();
   }
 }
+
+List<DoseSlot> _waiting(TodayState state) => [
+  for (final group in state.due) ...group.slots,
+];

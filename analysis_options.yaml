@@ -9,7 +9,9 @@ analyzer:
     - "**/*.freezed.dart"
     - "**/*.drift.dart"
     - "**/generated_plugin_registrant.dart"
+    - lib/l10n/app_localizations*.dart
     - build/**
+    - artifacts/**
     - android/**
     - ios/**
     - web/**
