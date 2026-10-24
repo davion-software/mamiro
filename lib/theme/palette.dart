@@ -38,6 +38,11 @@ abstract final class MamiroPalette {
   /// and on [coralMist].
   static const coralDeep = Color(0xFF9C3F1A);
 
+  /// Coral buttons and chips carry white text, so they use a deeper coral:
+  /// white is 5:1 on the lighter top of the gradient.
+  static const coralButtonTop = Color(0xFFBC4D24);
+  static const coralButtonBottom = Color(0xFFA9431C);
+
   /// Coral for thin graphics such as the progress ring (3.9:1).
   static const coralStrong = Color(0xFFC95A33);
   static const coralMist = Color(0xFFFCE3D8);

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
 import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/coral_surface.dart';
 
 final class AppShell extends StatelessWidget {
   const AppShell({required this.navigationShell, super.key});
@@ -126,35 +127,48 @@ final class _NavItem extends StatelessWidget {
       excludeSemantics: true,
       child: Tooltip(
         message: label,
-        child: Material(
-          color: selected ? MamiroPalette.coral : MamiroPalette.surfaceMuted,
-          borderRadius: BorderRadius.circular(999),
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(999),
-            child: AnimatedSize(
-              duration: const Duration(milliseconds: 180),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: selected ? 16 : 13,
-                  vertical: 13,
+        child: DecoratedBox(
+          decoration: selected
+              ? coralSurface()
+              : BoxDecoration(
+                  color: MamiroPalette.surfaceMuted,
+                  borderRadius: BorderRadius.circular(999),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(icon, size: 22, color: MamiroPalette.ink),
-                    if (selected) ...[
-                      const SizedBox(width: 8),
-                      Text(
-                        label,
-                        style: const TextStyle(
-                          fontFamily: MamiroPalette.fontFamily,
-                          fontWeight: FontWeight.w700,
-                          color: MamiroPalette.ink,
-                        ),
+          child: Material(
+            type: MaterialType.transparency,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(999),
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 180),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: selected ? 16 : 13,
+                    vertical: 13,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        icon,
+                        size: 22,
+                        color: selected
+                            ? MamiroPalette.surface
+                            : MamiroPalette.ink,
                       ),
+                      if (selected) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          label,
+                          style: const TextStyle(
+                            fontFamily: MamiroPalette.fontFamily,
+                            fontWeight: FontWeight.w700,
+                            color: MamiroPalette.surface,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),

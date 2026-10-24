@@ -42,6 +42,14 @@ void main() {
       'white on cobalt': (MamiroPalette.surface, MamiroPalette.cobalt),
       'white on coralDeep': (MamiroPalette.surface, MamiroPalette.coralDeep),
       'ink on coral': (MamiroPalette.ink, MamiroPalette.coral),
+      'white on coral button top': (
+        MamiroPalette.surface,
+        MamiroPalette.coralButtonTop,
+      ),
+      'white on coral button bottom': (
+        MamiroPalette.surface,
+        MamiroPalette.coralButtonBottom,
+      ),
       'cobalt on cobaltMist': (MamiroPalette.cobalt, MamiroPalette.cobaltMist),
       'inkSoft on cobaltMist': (
         MamiroPalette.inkSoft,

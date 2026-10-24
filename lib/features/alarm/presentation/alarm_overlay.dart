@@ -10,6 +10,7 @@ import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/coral_chip.dart';
+import 'package:mamiro/theme/widgets/coral_surface.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
 import 'package:mamiro/theme/widgets/sky_background.dart';
 
@@ -371,28 +372,20 @@ final class _RoundAction extends StatelessWidget {
                 height: 84,
                 child: Center(
                   child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: primary
-                          ? MamiroPalette.coral
-                          : MamiroPalette.surfaceMuted,
-                      boxShadow: primary
-                          ? [
-                              BoxShadow(
-                                color: MamiroPalette.coral.withValues(
-                                  alpha: 0.25,
-                                ),
-                                spreadRadius: 7,
-                              ),
-                            ]
-                          : null,
-                    ),
+                    decoration: primary
+                        ? coralSurface(shape: BoxShape.circle)
+                        : const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: MamiroPalette.surfaceMuted,
+                          ),
                     child: SizedBox.square(
                       dimension: size,
                       child: Icon(
                         icon,
                         size: primary ? 34 : 24,
-                        color: MamiroPalette.ink,
+                        color: primary
+                            ? MamiroPalette.surface
+                            : MamiroPalette.ink,
                       ),
                     ),
                   ),
