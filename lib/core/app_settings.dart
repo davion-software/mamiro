@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:mamiro/core/theme_choice.dart';
 
 @immutable
 final class AppSettings {
@@ -7,12 +8,14 @@ final class AppSettings {
     required this.vibration,
     required this.banners,
     required this.snoozeMinutes,
+    this.theme = ThemeChoice.fallback,
   });
 
   final bool sound;
   final bool vibration;
   final bool banners;
   final int snoozeMinutes;
+  final ThemeChoice theme;
 
   static const defaults = AppSettings(
     sound: true,
@@ -26,12 +29,14 @@ final class AppSettings {
     bool? vibration,
     bool? banners,
     int? snoozeMinutes,
+    ThemeChoice? theme,
   }) {
     return AppSettings(
       sound: sound ?? this.sound,
       vibration: vibration ?? this.vibration,
       banners: banners ?? this.banners,
       snoozeMinutes: snoozeMinutes ?? this.snoozeMinutes,
+      theme: theme ?? this.theme,
     );
   }
 }

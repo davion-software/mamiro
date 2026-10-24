@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/features/today/presentation/today_notifier.dart';
 import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
 import 'package:mamiro/features/today/presentation/widgets/done_list.dart';
@@ -9,7 +10,6 @@ import 'package:mamiro/features/today/presentation/widgets/refill_card.dart';
 import 'package:mamiro/features/today/presentation/widgets/taken_ring.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/async_page.dart';
 import 'package:mamiro/theme/widgets/coral_chip.dart';
 import 'package:mamiro/theme/widgets/empty_state.dart';
@@ -78,7 +78,7 @@ final class _TodayContent extends StatelessWidget {
                     Text(
                       l10n.nothingToday,
                       style: Theme.of(context).textTheme.bodyLarge
-                          ?.copyWith(color: MamiroPalette.inkSoft),
+                          ?.copyWith(color: context.colors.inkSoft),
                     ),
                   ],
                 ],
@@ -170,7 +170,7 @@ final class _TodayHeader extends StatelessWidget {
           Text(
             summary,
             style: textTheme.titleMedium?.copyWith(
-              color: MamiroPalette.ink,
+              color: context.colors.ink,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -341,5 +341,11 @@
   "demoMagnesium": "Magnesium",
   "demoWithBreakfast": "with breakfast",
   "demoSameTimes": "same times each day",
-  "demoBeforeBed": "before bed"
+  "demoBeforeBed": "before bed",
+  "sectionTheme": "Theme",
+  "themeNightApricot": "Night blue & apricot",
+  "themeCobaltPeach": "Cobalt & peach",
+  "themeTealCoral": "Teal & coral",
+  "themePlumPeach": "Plum & peach",
+  "themeDefault": "Default"
 }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/features/medications/presentation/medications_notifier.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/async_page.dart';
 import 'package:mamiro/theme/widgets/empty_state.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
@@ -50,7 +50,7 @@ final class _MedicationList extends StatelessWidget {
                   Text(
                     context.l10n.cabinetSubtitle,
                     style: Theme.of(context).textTheme.bodyLarge
-                        ?.copyWith(color: MamiroPalette.inkSoft),
+                        ?.copyWith(color: context.colors.inkSoft),
                   ),
                   const SizedBox(height: 24),
                   if (failure != null) StorageBanner(failure: failure),
@@ -122,15 +122,15 @@ final class _MedCard extends StatelessWidget {
                         : l10n.pillsLeft(quantity),
                     style: textTheme.labelSmall?.copyWith(
                       color: med.needsRefill
-                          ? MamiroPalette.coralDeep
-                          : MamiroPalette.cobalt,
+                          ? context.colors.warning
+                          : context.colors.inkSoft,
                       letterSpacing: 0.3,
                     ),
                   ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right, color: MamiroPalette.inkSoft),
+          Icon(Icons.chevron_right, color: context.colors.inkSoft),
         ],
       ),
     );

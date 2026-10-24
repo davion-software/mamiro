@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/core/theme_choice.dart';
 import 'package:mamiro/l10n/app_localizations.dart';
 
 export 'package:mamiro/l10n/app_localizations.dart';
@@ -115,6 +116,13 @@ final class Formats {
     PillColor.slate => l10n.colorSlate,
     PillColor.ink => l10n.colorInk,
     PillColor.blush => l10n.colorBlush,
+  };
+
+  String theme(ThemeChoice choice) => switch (choice) {
+    ThemeChoice.nightApricot => l10n.themeNightApricot,
+    ThemeChoice.cobaltPeach => l10n.themeCobaltPeach,
+    ThemeChoice.tealCoral => l10n.themeTealCoral,
+    ThemeChoice.plumPeach => l10n.themePlumPeach,
   };
 
   // 2024-01-01 was a Monday, so weekday 1..7 maps onto that week.

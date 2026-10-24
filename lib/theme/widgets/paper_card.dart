@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 
 /// A white card floating on the sky background.
 class PaperCard extends StatelessWidget {
@@ -9,14 +9,16 @@ class PaperCard extends StatelessWidget {
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(16),
-    this.color = MamiroPalette.surface,
+    this.color,
     this.gradient,
   });
 
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsetsGeometry padding;
-  final Color color;
+
+  /// Defaults to the theme's surface.
+  final Color? color;
 
   /// Paints over [color], for cards that need to stand out.
   final Gradient? gradient;
@@ -31,14 +33,14 @@ class PaperCard extends StatelessWidget {
         borderRadius: _radius,
         boxShadow: [
           BoxShadow(
-            color: MamiroPalette.cobalt.withValues(alpha: 0.06),
+            color: context.colors.primary.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
         ],
       ),
       child: Material(
-        color: color,
+        color: color ?? context.colors.surface,
         shape: RoundedRectangleBorder(borderRadius: _radius),
         clipBehavior: Clip.antiAlias,
         child: Ink(

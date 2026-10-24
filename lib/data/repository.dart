@@ -521,6 +521,7 @@ final class MamiroRepository {
             vibration: settings.vibration,
             banners: settings.banners,
             snoozeMinutes: settings.snoozeMinutes,
+            theme: Value(settings.theme.name),
           ),
         );
   }

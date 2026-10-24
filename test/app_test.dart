@@ -8,6 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mamiro/app.dart';
+import 'package:mamiro/core/theme_choice.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_overlay.dart';
 import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/storage_failure.dart';
@@ -243,5 +245,27 @@ void main() {
 
     expect(find.text('Pick at least one day'), findsOneWidget);
     expect(find.text('Add medication'), findsOneWidget);
+  });
+
+  testWidgets('the default theme is night blue and apricot', (tester) async {
+    await pumpMamiro(tester);
+
+    final context = tester.element(find.text('Good morning'));
+    expect(context.colors, MamiroColors.nightApricot);
+  });
+
+  testWidgets('picking a theme in Settings restyles the app', (tester) async {
+    await pumpMamiro(tester);
+    await tester.tap(find.byTooltip('Settings'));
+    await pumpAppFrames(tester);
+
+    final option = find.text('Teal & coral');
+    await tester.scrollUntilVisible(option, 200);
+    await tester.tap(option);
+    await pumpAppFrames(tester);
+
+    final context = tester.element(find.text('Teal & coral'));
+    expect(context.colors, MamiroColors.of(ThemeChoice.tealCoral));
+    expect(find.text('Default'), findsOneWidget);
   });
 }

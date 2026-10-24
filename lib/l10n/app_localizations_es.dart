@@ -602,4 +602,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get demoBeforeBed => 'antes de dormir';
+
+  @override
+  String get sectionTheme => 'Tema';
+
+  @override
+  String get themeNightApricot => 'Azul noche y albaricoque';
+
+  @override
+  String get themeCobaltPeach => 'Cobalto y melocotón';
+
+  @override
+  String get themeTealCoral => 'Petróleo y coral';
+
+  @override
+  String get themePlumPeach => 'Ciruela y melocotón';
+
+  @override
+  String get themeDefault => 'Predeterminado';
 }

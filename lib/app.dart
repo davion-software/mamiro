@@ -12,7 +12,9 @@ import 'package:mamiro/routing/app_router.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/services/alarm_sync.dart';
 import 'package:mamiro/services/app_providers.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/theme/mamiro_theme.dart';
+import 'package:mamiro/theme/theme_choice_provider.dart';
 import 'package:mamiro/theme/widgets/sky_background.dart';
 
 final class MamiroApp extends ConsumerStatefulWidget {
@@ -78,7 +80,7 @@ final class _MamiroAppState extends ConsumerState<MamiroApp>
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       debugShowCheckedModeBanner: false,
-      theme: mamiroTheme(),
+      theme: mamiroTheme(MamiroColors.of(ref.watch(themeChoiceProvider))),
       routerConfig: router,
       builder: (context, child) {
         return SkyBackground(

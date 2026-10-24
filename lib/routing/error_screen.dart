@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
-import 'package:mamiro/theme/palette.dart';
 
 /// Shown for unknown routes. The technical cause goes to the log, never to
 /// the screen.
@@ -20,10 +20,10 @@ final class ErrorScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.explore_off_outlined,
                   size: 48,
-                  color: MamiroPalette.inkSoft,
+                  color: context.colors.inkSoft,
                 ),
                 const SizedBox(height: 16),
                 Text(
@@ -36,7 +36,7 @@ final class ErrorScreen extends StatelessWidget {
                   l10n.notFoundBody,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge
-                      ?.copyWith(color: MamiroPalette.inkSoft),
+                      ?.copyWith(color: context.colors.inkSoft),
                 ),
                 const SizedBox(height: 20),
                 FilledButton(

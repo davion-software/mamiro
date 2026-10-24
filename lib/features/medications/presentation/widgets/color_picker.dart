@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/palette.dart';
@@ -37,7 +38,7 @@ final class ColorPicker extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(
                         color: color == value
-                            ? MamiroPalette.ink
+                            ? context.colors.ink
                             : Colors.transparent,
                         width: 2.4,
                       ),
@@ -45,10 +46,10 @@ final class ColorPicker extends StatelessWidget {
                     child: SizedBox.square(
                       dimension: size,
                       child: color == value
-                          ? const Icon(
+                          ? Icon(
                               Icons.check,
                               size: 18,
-                              color: MamiroPalette.surface,
+                              color: context.colors.surface,
                             )
                           : null,
                     ),

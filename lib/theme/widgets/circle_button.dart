@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 
 /// A round white icon button, used for back and header actions.
 final class CircleButton extends StatelessWidget {
@@ -21,14 +21,14 @@ final class CircleButton extends StatelessWidget {
     return Tooltip(
       message: tooltip,
       child: Material(
-        color: MamiroPalette.surface,
+        color: context.colors.surface,
         shape: const CircleBorder(),
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onPressed,
           child: SizedBox.square(
             dimension: size,
-            child: Icon(icon, size: 22, color: MamiroPalette.ink),
+            child: Icon(icon, size: 22, color: context.colors.ink),
           ),
         ),
       ),

@@ -172,5 +172,11 @@
   "demoMagnesium": "Magnesio",
   "demoWithBreakfast": "con el desayuno",
   "demoSameTimes": "siempre a la misma hora",
-  "demoBeforeBed": "antes de dormir"
+  "demoBeforeBed": "antes de dormir",
+  "sectionTheme": "Tema",
+  "themeNightApricot": "Azul noche y albaricoque",
+  "themeCobaltPeach": "Cobalto y melocotón",
+  "themeTealCoral": "Petróleo y coral",
+  "themePlumPeach": "Ciruela y melocotón",
+  "themeDefault": "Predeterminado"
 }

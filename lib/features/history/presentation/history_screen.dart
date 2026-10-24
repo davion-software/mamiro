@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/day_summary.dart';
 import 'package:mamiro/core/dose_event.dart';
@@ -12,6 +13,7 @@ import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/async_page.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/status_chip.dart';
 import 'package:mamiro/theme/widgets/storage_banner.dart';
 
 final class HistoryScreen extends ConsumerWidget {
@@ -69,7 +71,7 @@ final class _HistoryContent extends StatelessWidget {
                               adherence.resolved,
                             ),
                       style: textTheme.bodyLarge?.copyWith(
-                        color: MamiroPalette.inkSoft,
+                        color: context.colors.inkSoft,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -78,7 +80,7 @@ final class _HistoryContent extends StatelessWidget {
                           ? l10n.streakNone
                           : l10n.streakDays(state.streak),
                       style: textTheme.titleMedium?.copyWith(
-                        color: MamiroPalette.cobalt,
+                        color: context.colors.primary,
                       ),
                     ),
                   ],
@@ -114,7 +116,7 @@ final class _HistoryContent extends StatelessWidget {
                 Text(
                   l10n.logEmpty,
                   style: textTheme.bodyLarge?.copyWith(
-                    color: MamiroPalette.inkSoft,
+                    color: context.colors.inkSoft,
                   ),
                 ),
               for (final logDay in state.log) ...[
@@ -134,7 +136,7 @@ final class _HistoryContent extends StatelessWidget {
                     children: [
                       for (final (index, event) in logDay.events.indexed) ...[
                         if (index > 0)
-                          const Divider(height: 1, color: MamiroPalette.line),
+                          Divider(height: 1, color: context.colors.line),
                         _LogRow(key: ValueKey(event.id), event: event),
                       ],
                     ],
@@ -154,24 +156,25 @@ final class _HistoryContent extends StatelessWidget {
       showModalBottomSheet<void>(
         context: context,
         showDragHandle: true,
-        backgroundColor: MamiroPalette.surface,
+        backgroundColor: context.colors.surface,
         builder: (context) => _DaySheet(summary: day, now: state.now),
       ).catchError(unexpectedLogger('mamiro.history', 'history.day')),
     );
   }
 }
 
-Color _markFill(DayMark mark) => switch (mark) {
-  DayMark.complete => MamiroPalette.cobalt,
-  DayMark.mixed => MamiroPalette.coralDeep,
+Color _markFill(MamiroColors colors, DayMark mark) => switch (mark) {
+  DayMark.complete => colors.success,
+  DayMark.mixed => colors.danger,
   DayMark.pending || DayMark.empty => Colors.transparent,
 };
 
-Color _markBorder(DayMark mark) => switch (mark) {
-  DayMark.complete => MamiroPalette.cobalt,
-  DayMark.mixed => MamiroPalette.coralDeep,
-  DayMark.pending => MamiroPalette.cobalt,
-  DayMark.empty => MamiroPalette.ringTrack,
+// Empty days use the faint line on purpose: nothing happened there.
+Color _markBorder(MamiroColors colors, DayMark mark) => switch (mark) {
+  DayMark.complete => colors.success,
+  DayMark.mixed => colors.danger,
+  DayMark.pending => colors.primary,
+  DayMark.empty => colors.primaryContainer,
 };
 
 final class _DayCell extends StatelessWidget {
@@ -198,9 +201,12 @@ final class _DayCell extends StatelessWidget {
             const SizedBox(height: 6),
             DecoratedBox(
               decoration: BoxDecoration(
-                color: _markFill(mark),
+                color: _markFill(context.colors, mark),
                 shape: BoxShape.circle,
-                border: Border.all(color: _markBorder(mark), width: 1.6),
+                border: Border.all(
+                  color: _markBorder(context.colors, mark),
+                  width: 1.6,
+                ),
               ),
               child: SizedBox.square(
                 dimension: 30,
@@ -212,10 +218,10 @@ final class _DayCell extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: filled
-                          ? MamiroPalette.surface
+                          ? context.colors.surface
                           : mark == DayMark.empty
-                          ? MamiroPalette.inkSoft
-                          : MamiroPalette.ink,
+                          ? context.colors.inkSoft
+                          : context.colors.ink,
                     ),
                   ),
                 ),
@@ -250,9 +256,12 @@ final class _Legend extends StatelessWidget {
             children: [
               DecoratedBox(
                 decoration: BoxDecoration(
-                  color: _markFill(mark),
+                  color: _markFill(context.colors, mark),
                   shape: BoxShape.circle,
-                  border: Border.all(color: _markBorder(mark), width: 1.4),
+                  border: Border.all(
+                    color: _markBorder(context.colors, mark),
+                    width: 1.4,
+                  ),
                 ),
                 child: const SizedBox.square(dimension: 10),
               ),
@@ -281,9 +290,9 @@ final class _LogRow extends StatelessWidget {
       DoseAction.snoozed => l10n.logSnoozedAt(at),
     };
     final color = switch (event.action) {
-      DoseAction.taken => MamiroPalette.cobalt,
-      DoseAction.skipped => MamiroPalette.coralDeep,
-      DoseAction.snoozed => MamiroPalette.inkSoft,
+      DoseAction.taken => context.colors.success,
+      DoseAction.skipped => context.colors.danger,
+      DoseAction.snoozed => context.colors.inkSoft,
     };
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -345,7 +354,7 @@ final class _DaySheet extends StatelessWidget {
               Text(
                 l10n.daySheetEmpty,
                 style: textTheme.bodyLarge?.copyWith(
-                  color: MamiroPalette.inkSoft,
+                  color: context.colors.inkSoft,
                 ),
               ),
             for (final slot in summary.slots)
@@ -374,16 +383,20 @@ final class _DaySheet extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Text(
-                      _status(context, slot),
-                      style: textTheme.titleMedium?.copyWith(
-                        color: switch (slot.status) {
-                          SlotStatus.taken => MamiroPalette.cobalt,
-                          SlotStatus.missed ||
-                          SlotStatus.skipped => MamiroPalette.coralDeep,
-                          _ => MamiroPalette.inkSoft,
-                        },
-                      ),
+                    StatusChip(
+                      label: _status(context, slot),
+                      tone: switch (slot.status) {
+                        SlotStatus.taken => StatusTone.success,
+                        SlotStatus.missed ||
+                        SlotStatus.skipped => StatusTone.danger,
+                        _ => StatusTone.neutral,
+                      },
+                      icon: switch (slot.status) {
+                        SlotStatus.taken => Icons.check,
+                        SlotStatus.missed => Icons.error_outline,
+                        SlotStatus.skipped => Icons.block,
+                        _ => Icons.schedule,
+                      },
                     ),
                   ],
                 ),

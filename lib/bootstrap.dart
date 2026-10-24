@@ -20,7 +20,6 @@ import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/services/alarm_sync.dart';
 import 'package:mamiro/services/app_providers.dart';
 import 'package:mamiro/services/local_alarm_gateway.dart';
-import 'package:mamiro/theme/palette.dart';
 
 Future<void> bootstrap() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +28,6 @@ Future<void> bootstrap() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: MamiroPalette.skyBottom,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );

@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/features/settings/presentation/settings_notifier.dart';
+import 'package:mamiro/features/settings/presentation/widgets/theme_picker.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/theme/palette.dart';
@@ -106,12 +108,15 @@ final class _SettingsContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
+        SectionLabel(l10n.sectionTheme),
+        ThemePicker(selected: settings.theme, onChanged: notifier.setTheme),
+        const SizedBox(height: 20),
         SectionLabel(l10n.sectionSnooze),
         PaperCard(
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              for (final minutes in const [5, 10, 15])
+              for (final minutes in [5, 10, 15])
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -126,13 +131,13 @@ final class _SettingsContent extends ConsumerWidget {
                         ),
                       ),
                       selected: settings.snoozeMinutes == minutes,
-                      selectedColor: MamiroPalette.cobalt,
+                      selectedColor: context.colors.primary,
                       labelStyle: TextStyle(
                         fontFamily: MamiroPalette.fontFamily,
                         fontWeight: FontWeight.w600,
                         color: settings.snoozeMinutes == minutes
-                            ? MamiroPalette.surface
-                            : MamiroPalette.ink,
+                            ? context.colors.surface
+                            : context.colors.ink,
                       ),
                       onSelected: (selected) {
                         if (!selected) return;
@@ -179,7 +184,7 @@ final class _SettingsContent extends ConsumerWidget {
                 TextButton(
                   onPressed: () => _startConfirmClear(context, ref),
                   style: TextButton.styleFrom(
-                    foregroundColor: MamiroPalette.coralDeep,
+                    foregroundColor: context.colors.danger,
                   ),
                   child: Text(l10n.clearAll),
                 ),
@@ -215,7 +220,7 @@ final class _SettingsContent extends ConsumerWidget {
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: MamiroPalette.coralDeep,
+                foregroundColor: context.colors.danger,
               ),
               child: Text(l10n.clearConfirm),
             ),
@@ -291,7 +296,7 @@ final class _AccessTile extends StatelessWidget {
       trailing: granted
           ? Icon(
               Icons.check_circle,
-              color: MamiroPalette.cobalt,
+              color: context.colors.success,
               semanticLabel: context.l10n.allowed,
             )
           : TextButton(onPressed: onAllow, child: Text(context.l10n.allow)),

@@ -113,6 +113,9 @@ class Settings extends Table {
   BoolColumn get banners => boolean()();
   IntColumn get snoozeMinutes => integer()();
 
+  /// A ThemeChoice name. Added in schema version 2.
+  TextColumn get theme => text().withDefault(const Constant('nightApricot'))();
+
   @override
   Set<Column<Object>> get primaryKey => {id};
 
@@ -140,7 +143,7 @@ final class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -166,6 +169,9 @@ final class AppDatabase extends _$AppDatabase {
         '(NEW.snooze_until_utc_ms IS NOT NULL) '
         "BEGIN SELECT RAISE(ABORT, 'invalid snooze event'); END",
       );
+    },
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) await migrator.addColumn(settings, settings.theme);
     },
     beforeOpen: (details) async {
       for (final pragma in databaseSetupPragmas) {

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/features/medications/presentation/medications_notifier.dart';
@@ -12,7 +13,6 @@ import 'package:mamiro/features/medications/presentation/widgets/shape_picker.da
 import 'package:mamiro/features/medications/presentation/widgets/weekday_picker.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/circle_button.dart';
 
 final class MedicationEditorScreen extends ConsumerStatefulWidget {
@@ -209,15 +209,13 @@ final class _MedicationEditorScreenState
                         formats.minutes(minutes),
                         style: textTheme.titleMedium,
                       ),
-                      avatar: const Icon(
+                      avatar: Icon(
                         Icons.schedule,
                         size: 18,
-                        color: MamiroPalette.cobalt,
+                        color: context.colors.primary,
                       ),
-                      backgroundColor: MamiroPalette.surface,
-                      side: const BorderSide(
-                        color: MamiroPalette.outlineStrong,
-                      ),
+                      backgroundColor: context.colors.surface,
+                      side: BorderSide(color: context.colors.outline),
                       onPressed: () => _pickTime(replacing: minutes),
                       onDeleted: _times.length == 1
                           ? null
@@ -295,7 +293,7 @@ final class _MedicationEditorScreenState
                   Text(
                     l10n.thresholdWarning,
                     style: textTheme.bodyMedium?.copyWith(
-                      color: MamiroPalette.coralDeep,
+                      color: context.colors.warning,
                     ),
                   ),
                 ],
@@ -328,7 +326,7 @@ final class _MedicationEditorScreenState
                 TextButton(
                   onPressed: _delete,
                   style: TextButton.styleFrom(
-                    foregroundColor: MamiroPalette.coralDeep,
+                    foregroundColor: context.colors.danger,
                   ),
                   child: Text(l10n.deleteMedication),
                 ),
@@ -411,7 +409,7 @@ final class _MedicationEditorScreenState
         shape: _shape,
         color: _color,
         timesMinutes: [..._times]..sort(),
-        daysOfWeek: _specificDays ? (_days.toList()..sort()) : const [],
+        daysOfWeek: _specificDays ? (_days.toList()..sort()) : [],
         startsOn: existing?.startsOn,
         quantity: quantity,
         refillThreshold: threshold,
@@ -449,7 +447,7 @@ final class _MedicationEditorScreenState
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: MamiroPalette.coralDeep,
+                foregroundColor: context.colors.danger,
               ),
               child: Text(context.l10n.delete),
             ),

@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/dose_slot.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/coral_chip.dart';
 import 'package:mamiro/theme/widgets/coral_surface.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
@@ -156,8 +156,8 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                                   if (detail.isNotEmpty)
                                     TextSpan(
                                       text: '\n$detail',
-                                      style: const TextStyle(
-                                        color: MamiroPalette.inkSoft,
+                                      style: TextStyle(
+                                        color: context.colors.inkSoft,
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                         letterSpacing: 0,
@@ -194,11 +194,11 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                 ),
                 DecoratedBox(
                   decoration: BoxDecoration(
-                    color: MamiroPalette.surface,
+                    color: context.colors.surface,
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: MamiroPalette.cobalt.withValues(alpha: 0.1),
+                        color: context.colors.primary.withValues(alpha: 0.1),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -210,7 +210,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                       children: [
                         DecoratedBox(
                           decoration: BoxDecoration(
-                            color: MamiroPalette.surfaceMuted,
+                            color: context.colors.muted,
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Padding(
@@ -274,7 +274,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
                               formats.storageFailure(actionFailure),
                               textAlign: TextAlign.center,
                               style: textTheme.bodyMedium?.copyWith(
-                                color: MamiroPalette.coralDeep,
+                                color: context.colors.danger,
                               ),
                             ),
                           ),
@@ -311,21 +311,21 @@ final class _PillArt extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(44),
-        gradient: const RadialGradient(
-          center: Alignment(-0.35, -0.4),
+        gradient: RadialGradient(
+          center: const Alignment(-0.35, -0.4),
           radius: 1.1,
           // Light enough that a coral or dark pill still stands out.
           colors: [
-            MamiroPalette.surface,
-            MamiroPalette.coralMist,
-            MamiroPalette.skyBottom,
+            context.colors.surface,
+            context.colors.accentContainer,
+            context.colors.bgBottom,
           ],
-          stops: [0, 0.5, 1],
+          stops: const [0, 0.5, 1],
         ),
-        border: Border.all(color: MamiroPalette.surface, width: 4),
+        border: Border.all(color: context.colors.surface, width: 4),
         boxShadow: [
           BoxShadow(
-            color: MamiroPalette.coral.withValues(alpha: 0.3),
+            color: context.colors.accent.withValues(alpha: 0.3),
             blurRadius: 30,
             offset: const Offset(0, 12),
           ),
@@ -373,10 +373,10 @@ final class _RoundAction extends StatelessWidget {
                 child: Center(
                   child: DecoratedBox(
                     decoration: primary
-                        ? coralSurface(shape: BoxShape.circle)
-                        : const BoxDecoration(
+                        ? accentSurface(context.colors, shape: BoxShape.circle)
+                        : BoxDecoration(
                             shape: BoxShape.circle,
-                            color: MamiroPalette.surfaceMuted,
+                            color: context.colors.muted,
                           ),
                     child: SizedBox.square(
                       dimension: size,
@@ -384,8 +384,8 @@ final class _RoundAction extends StatelessWidget {
                         icon,
                         size: primary ? 34 : 24,
                         color: primary
-                            ? MamiroPalette.surface
-                            : MamiroPalette.ink,
+                            ? context.colors.onAccent
+                            : context.colors.ink,
                       ),
                     ),
                   ),

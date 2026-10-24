@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/dose_slot.dart';
 import 'package:mamiro/l10n/l10n.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/status_chip.dart';
 
 /// Taken and skipped doses as quiet single lines, each one undoable.
 final class DoneList extends StatelessWidget {
@@ -19,7 +20,7 @@ final class DoneList extends StatelessWidget {
       child: Column(
         children: [
           for (final (index, slot) in slots.indexed) ...[
-            if (index > 0) const Divider(height: 1, color: MamiroPalette.line),
+            if (index > 0) Divider(height: 1, color: context.colors.line),
             _DoneRow(key: ValueKey(slot.id), slot: slot, onUndo: onUndo),
           ],
         ],
@@ -64,14 +65,14 @@ final class _DoneRow extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme.titleMedium?.copyWith(
-                    color: MamiroPalette.inkSoft,
+                    color: context.colors.inkSoft,
                   ),
                 ),
-                Text(
-                  status,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: taken ? MamiroPalette.cobalt : MamiroPalette.inkSoft,
-                  ),
+                const SizedBox(height: 4),
+                StatusChip(
+                  label: status,
+                  tone: taken ? StatusTone.success : StatusTone.danger,
+                  icon: taken ? Icons.check : Icons.block,
                 ),
               ],
             ),

@@ -1135,6 +1135,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'before bed'**
   String get demoBeforeBed;
+
+  /// No description provided for @sectionTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get sectionTheme;
+
+  /// No description provided for @themeNightApricot.
+  ///
+  /// In en, this message translates to:
+  /// **'Night blue & apricot'**
+  String get themeNightApricot;
+
+  /// No description provided for @themeCobaltPeach.
+  ///
+  /// In en, this message translates to:
+  /// **'Cobalt & peach'**
+  String get themeCobaltPeach;
+
+  /// No description provided for @themeTealCoral.
+  ///
+  /// In en, this message translates to:
+  /// **'Teal & coral'**
+  String get themeTealCoral;
+
+  /// No description provided for @themePlumPeach.
+  ///
+  /// In en, this message translates to:
+  /// **'Plum & peach'**
+  String get themePlumPeach;
+
+  /// No description provided for @themeDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default'**
+  String get themeDefault;
 }
 
 class _AppLocalizationsDelegate

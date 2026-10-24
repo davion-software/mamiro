@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/features/today/presentation/today_notifier.dart';
 import 'package:mamiro/features/today/presentation/widgets/dose_tile.dart';
 import 'package:mamiro/l10n/l10n.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 
 /// A labelled section of doses, one block per scheduled time.
@@ -103,7 +103,7 @@ final class _GroupHeader extends StatelessWidget {
             child: Text(
               showTime ? context.formats.clock(group.time) : '',
               style: Theme.of(context).textTheme.titleMedium
-                  ?.copyWith(color: MamiroPalette.cobalt),
+                  ?.copyWith(color: context.colors.primary),
             ),
           ),
           if (takeAll != null && count > 1)

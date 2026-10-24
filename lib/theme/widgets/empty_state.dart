@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 
 /// A centered first-run message with one clear next step.
 final class EmptyState extends StatelessWidget {
@@ -24,13 +24,13 @@ final class EmptyState extends StatelessWidget {
     return Column(
       children: [
         DecoratedBox(
-          decoration: const BoxDecoration(
-            color: MamiroPalette.cobaltMist,
+          decoration: BoxDecoration(
+            color: context.colors.primaryContainer,
             shape: BoxShape.circle,
           ),
           child: SizedBox.square(
             dimension: 88,
-            child: Icon(icon, size: 40, color: MamiroPalette.cobalt),
+            child: Icon(icon, size: 40, color: context.colors.primary),
           ),
         ),
         const SizedBox(height: 20),
@@ -43,7 +43,7 @@ final class EmptyState extends StatelessWidget {
         Text(
           body,
           textAlign: TextAlign.center,
-          style: textTheme.bodyLarge?.copyWith(color: MamiroPalette.inkSoft),
+          style: textTheme.bodyLarge?.copyWith(color: context.colors.inkSoft),
         ),
         const SizedBox(height: 24),
         FilledButton.icon(
