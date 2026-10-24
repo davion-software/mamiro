@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meta/meta.dart';
+import 'package:mamiro/core/adherence.dart';
 import 'package:mamiro/core/day_summary.dart';
 import 'package:mamiro/core/dose_event.dart';
-import 'package:mamiro/core/format.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/core/schedule.dart';
 import 'package:mamiro/core/storage_failure.dart';
@@ -10,29 +10,23 @@ import 'package:mamiro/data/providers.dart';
 import 'package:mamiro/services/app_providers.dart';
 import 'package:mamiro/services/async_combine.dart';
 
+/// Logged events for one calendar day, newest first.
 @immutable
-final class HistoryEventState {
-  const HistoryEventState({
-    required this.id,
-    required this.name,
-    required this.detail,
-    required this.action,
-  });
+final class LogDay {
+  const LogDay({required this.day, required this.events});
 
-  final String id;
-  final String name;
-  final String detail;
-  final DoseAction action;
+  final DateTime day;
+  final List<DoseEvent> events;
 }
 
 @immutable
 final class HistoryState {
   const HistoryState({
-    required this.percentLabel,
-    required this.summaryLabel,
-    required this.streakLabel,
+    required this.now,
+    required this.adherence,
+    required this.streak,
     required this.days,
-    required this.events,
+    required this.log,
     this.failure,
   });
 
@@ -41,61 +35,50 @@ final class HistoryState {
     required List<DoseEvent> events,
     required DateTime now,
   }) {
-    final adherence = adherenceForRange(
-      medications: medications,
-      events: events,
-      from: mondayOf(now),
-      to: dateOnly(now),
-      now: now,
-    );
-    final rate = adherence.rate;
-    final streak = cleanStreak(
-      medications: medications,
-      events: events,
-      now: now,
-    );
-    final recent = [...events]
-      ..sort((first, second) => second.at.compareTo(first.at));
+    final today = dateOnly(now);
+    final recent = ([...events]..sort((a, b) => b.at.compareTo(a.at))).take(30);
+    final log = <LogDay>[];
+    for (final event in recent) {
+      final day = dateOnly(event.at);
+      final last = log.lastOrNull;
+      if (last != null && last.day == day) {
+        last.events.add(event);
+      } else {
+        log.add(LogDay(day: day, events: [event]));
+      }
+    }
     return HistoryState(
-      percentLabel: rate == null ? '—' : '${(rate * 100).round()}%',
-      summaryLabel: rate == null
-          ? 'No resolved doses this week yet.'
-          : '${adherence.taken} of ${adherence.resolved} doses taken',
-      streakLabel: switch (streak) {
-        0 => 'No streak yet',
-        1 => '1 clean day',
-        _ => '$streak clean days',
-      },
+      now: now,
+      // The same seven days as the strip below it.
+      adherence: adherenceForRange(
+        medications: medications,
+        events: events,
+        from: today.subtract(const Duration(days: 6)),
+        to: today,
+        now: now,
+      ),
+      streak: cleanStreak(medications: medications, events: events, now: now),
       days: lastSevenDays(medications: medications, events: events, now: now),
-      events: [
-        for (final event in recent.take(30))
-          HistoryEventState(
-            id: event.id,
-            name: event.medicationName,
-            detail:
-                '${actionLabel(event.action)} · ${formatRelativeEvent(event.at, now)}',
-            action: event.action,
-          ),
-      ],
+      log: log,
     );
   }
 
-  factory HistoryState.unavailable(StorageFailure failure) {
+  factory HistoryState.unavailable(DateTime now, StorageFailure failure) {
     return HistoryState(
-      percentLabel: '—',
-      summaryLabel: 'History is unavailable.',
-      streakLabel: 'No streak yet',
+      now: now,
+      adherence: const Adherence(taken: 0, skipped: 0, missed: 0),
+      streak: 0,
       days: const [],
-      events: const [],
+      log: const [],
       failure: failure,
     );
   }
 
-  final String percentLabel;
-  final String summaryLabel;
-  final String streakLabel;
+  final DateTime now;
+  final Adherence adherence;
+  final int streak;
   final List<DaySummary> days;
-  final List<HistoryEventState> events;
+  final List<LogDay> log;
   final StorageFailure? failure;
 }
 
@@ -112,7 +95,7 @@ final class HistoryNotifier extends Notifier<AsyncValue<HistoryState>> {
       return foldResults2(
         first: results.$1,
         second: results.$2,
-        onErr: HistoryState.unavailable,
+        onErr: (failure) => HistoryState.unavailable(now, failure),
         onOk: (medications, events) => HistoryState.fromCabinet(
           medications: medications,
           events: events,

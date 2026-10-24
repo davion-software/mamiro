@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/palette.dart';
 
 class PillGlyph extends StatelessWidget {
@@ -18,7 +19,7 @@ class PillGlyph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: '${pillShapeName(shape)} ${pillColorName(color)}',
+      label: '${context.formats.shape(shape)} ${context.formats.color(color)}',
       child: CustomPaint(
         size: Size(size, size),
         painter: _PillPainter(shape: shape, color: colorFor(color)),

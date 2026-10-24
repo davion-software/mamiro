@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer' as developer;
 import 'dart:math';
 
@@ -7,13 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mamiro/app.dart';
+import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/id_generator.dart';
 import 'package:mamiro/core/result.dart';
 import 'package:mamiro/data/app_database.dart';
 import 'package:mamiro/data/database_connection.dart';
 import 'package:mamiro/data/providers.dart';
 import 'package:mamiro/data/repository.dart';
+import 'package:mamiro/services/alarm_background.dart';
+import 'package:mamiro/services/alarm_gateway.dart';
+import 'package:mamiro/services/alarm_sync.dart';
 import 'package:mamiro/services/app_providers.dart';
+import 'package:mamiro/services/local_alarm_gateway.dart';
 import 'package:mamiro/theme/palette.dart';
 
 Future<void> bootstrap() async {
@@ -23,14 +29,15 @@ Future<void> bootstrap() async {
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark,
-      systemNavigationBarColor: MamiroPalette.paper,
+      systemNavigationBarColor: MamiroPalette.skyBottom,
       systemNavigationBarIconBrightness: Brightness.dark,
     ),
   );
 
   final database = AppDatabase(await openDatabaseConnection());
   final repository = MamiroRepository(database);
-  final initialization = await repository.initialize();
+  const appClock = Clock();
+  final initialization = await repository.initialize(now: appClock.now());
   switch (initialization) {
     case Ok():
       break;
@@ -38,8 +45,18 @@ Future<void> bootstrap() async {
       developer.log(failure.code, name: 'mamiro.bootstrap');
   }
 
-  const appClock = Clock();
-  final idGenerator = _createIdGenerator(appClock, Random.secure());
+  final idGenerator = createIdGenerator(appClock, Random.secure());
+  final alarmGateway = await LocalAlarmGateway.create(
+    onResponse: (response) => unawaited(
+      _recordAlarmResponse(
+        repository,
+        response,
+        appClock.now(),
+        idGenerator(),
+      ).catchError(unexpectedLogger('mamiro.alarms', 'alarms.response')),
+    ),
+    onBackgroundResponse: onAlarmBackgroundResponse,
+  );
   runApp(
     ProviderScope(
       retry: (count, error) => null,
@@ -48,18 +65,26 @@ Future<void> bootstrap() async {
         mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(appClock),
         idGeneratorProvider.overrideWithValue(idGenerator),
+        alarmGatewayProvider.overrideWithValue(alarmGateway),
       ],
       child: const MamiroApp(),
     ),
   );
 }
 
-IdGenerator _createIdGenerator(Clock appClock, Random random) {
-  return () {
-    final timestamp = appClock.now().microsecondsSinceEpoch.toRadixString(36);
-    final noise = random.nextInt(0x7fffffff).toRadixString(36);
-    return '$timestamp$noise';
-  };
+Future<void> _recordAlarmResponse(
+  MamiroRepository repository,
+  AlarmResponse response,
+  DateTime now,
+  String eventId,
+) async {
+  final result = await recordAlarmResponse(
+    repository: repository,
+    response: response,
+    now: now,
+    eventId: eventId,
+  );
+  if (result case Err(:final failure)) logFailure('mamiro.alarms', failure);
 }
 
 void _installErrorHandlers() {

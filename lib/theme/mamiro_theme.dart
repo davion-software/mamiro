@@ -1,225 +1,289 @@
 import 'package:flutter/material.dart';
 import 'package:mamiro/theme/palette.dart';
 
+/// Tabular figures keep times like 8:00 and 20:00 aligned.
+const tabularFigures = [FontFeature.tabularFigures()];
+
 ThemeData mamiroTheme() {
   const ink = MamiroPalette.ink;
-  const paper = MamiroPalette.paper;
-  const sage = MamiroPalette.sage;
+  const inkSoft = MamiroPalette.inkSoft;
+  const surface = MamiroPalette.surface;
+  const cobalt = MamiroPalette.cobalt;
+  const font = MamiroPalette.fontFamily;
   const textTheme = TextTheme(
     displayLarge: TextStyle(
-      fontFamily: 'Fraunces',
-      fontWeight: FontWeight.w600,
+      fontFamily: font,
+      fontWeight: FontWeight.w800,
       fontSize: 56,
       height: 1.05,
-      color: ink,
+      letterSpacing: -1,
+      color: cobalt,
+      fontFeatures: tabularFigures,
     ),
     displayMedium: TextStyle(
-      fontFamily: 'Fraunces',
-      fontWeight: FontWeight.w600,
+      fontFamily: font,
+      fontWeight: FontWeight.w800,
       fontSize: 40,
       height: 1.1,
-      color: ink,
+      letterSpacing: -0.8,
+      color: cobalt,
+      fontFeatures: tabularFigures,
     ),
     headlineLarge: TextStyle(
-      fontFamily: 'Fraunces',
-      fontWeight: FontWeight.w600,
-      fontSize: 32,
+      fontFamily: font,
+      fontWeight: FontWeight.w800,
+      fontSize: 30,
       height: 1.15,
-      color: ink,
+      letterSpacing: -0.5,
+      color: cobalt,
     ),
     headlineMedium: TextStyle(
-      fontFamily: 'Fraunces',
-      fontWeight: FontWeight.w600,
-      fontSize: 26,
+      fontFamily: font,
+      fontWeight: FontWeight.w700,
+      fontSize: 24,
       height: 1.2,
-      color: ink,
+      letterSpacing: -0.3,
+      color: cobalt,
     ),
     titleLarge: TextStyle(
-      fontFamily: 'Fraunces',
-      fontWeight: FontWeight.w600,
-      fontSize: 22,
+      fontFamily: font,
+      fontWeight: FontWeight.w700,
+      fontSize: 20,
       height: 1.25,
       color: ink,
     ),
     titleMedium: TextStyle(
-      fontFamily: 'Outfit',
-      fontWeight: FontWeight.w600,
+      fontFamily: font,
+      fontWeight: FontWeight.w700,
       fontSize: 16,
       height: 1.3,
       color: ink,
+      fontFeatures: tabularFigures,
     ),
     bodyLarge: TextStyle(
-      fontFamily: 'Outfit',
+      fontFamily: font,
       fontWeight: FontWeight.w400,
       fontSize: 16,
       height: 1.45,
       color: ink,
     ),
     bodyMedium: TextStyle(
-      fontFamily: 'Outfit',
+      fontFamily: font,
       fontWeight: FontWeight.w400,
       fontSize: 14,
       height: 1.45,
-      color: MamiroPalette.inkSoft,
+      color: inkSoft,
+      fontFeatures: tabularFigures,
+    ),
+    bodySmall: TextStyle(
+      fontFamily: font,
+      fontWeight: FontWeight.w500,
+      fontSize: 12,
+      height: 1.35,
+      color: inkSoft,
     ),
     labelLarge: TextStyle(
-      fontFamily: 'Outfit',
-      fontWeight: FontWeight.w600,
+      fontFamily: font,
+      fontWeight: FontWeight.w700,
       fontSize: 14,
-      letterSpacing: 0.2,
       color: ink,
     ),
     labelSmall: TextStyle(
-      fontFamily: 'Outfit',
-      fontWeight: FontWeight.w500,
+      fontFamily: font,
+      fontWeight: FontWeight.w700,
       fontSize: 12,
-      letterSpacing: 0.8,
-      color: sage,
+      letterSpacing: 0.6,
+      color: inkSoft,
+      fontFeatures: tabularFigures,
     ),
   );
 
   const scheme = ColorScheme.light(
-    primary: sage,
-    onPrimary: paper,
-    secondary: sage,
-    onSecondary: paper,
-    surface: paper,
+    primary: cobalt,
+    primaryContainer: MamiroPalette.cobaltMist,
+    onPrimaryContainer: cobalt,
+    secondary: MamiroPalette.coral,
+    onSecondary: ink,
     onSurface: ink,
-    error: Color(0xFF9B4030),
-    onError: paper,
+    onSurfaceVariant: inkSoft,
+    surfaceContainerHighest: MamiroPalette.surfaceMuted,
+    error: MamiroPalette.coralDeep,
     outline: MamiroPalette.line,
+    outlineVariant: MamiroPalette.line,
+  );
+
+  final pill = RoundedRectangleBorder(borderRadius: BorderRadius.circular(999));
+  const buttonText = TextStyle(
+    fontFamily: font,
+    fontWeight: FontWeight.w700,
+    fontSize: 16,
   );
 
   return ThemeData(
     useMaterial3: true,
     colorScheme: scheme,
-    scaffoldBackgroundColor: paper,
-    canvasColor: paper,
+    // Screens sit on the sky gradient painted behind the whole app.
+    scaffoldBackgroundColor: Colors.transparent,
+    canvasColor: surface,
     textTheme: textTheme,
-    fontFamily: 'Outfit',
+    fontFamily: font,
     appBarTheme: const AppBarTheme(
-      backgroundColor: paper,
+      backgroundColor: Colors.transparent,
       foregroundColor: ink,
       elevation: 0,
       scrolledUnderElevation: 0,
       centerTitle: false,
       titleTextStyle: TextStyle(
-        fontFamily: 'Fraunces',
-        fontWeight: FontWeight.w600,
+        fontFamily: font,
+        fontWeight: FontWeight.w800,
         fontSize: 22,
-        color: ink,
+        color: cobalt,
       ),
-    ),
-    navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: paper,
-      elevation: 0,
-      height: 72,
-      indicatorColor: MamiroPalette.sageMist,
-      labelTextStyle: WidgetStateProperty.resolveWith((states) {
-        final selected = states.contains(WidgetState.selected);
-        return TextStyle(
-          fontFamily: 'Outfit',
-          fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-          fontSize: 12,
-          color: selected ? sage : MamiroPalette.inkSoft,
-        );
-      }),
-      iconTheme: WidgetStateProperty.resolveWith((states) {
-        final selected = states.contains(WidgetState.selected);
-        return IconThemeData(
-          color: selected ? sage : MamiroPalette.inkSoft,
-          size: 22,
-        );
-      }),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: MamiroPalette.paperDeep,
+      fillColor: surface,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         borderSide: BorderSide.none,
       ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(color: MamiroPalette.outlineStrong),
+      ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(16),
-        borderSide: const BorderSide(color: sage, width: 1.4),
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(color: cobalt, width: 1.6),
       ),
-      labelStyle: const TextStyle(
-        fontFamily: 'Outfit',
-        color: MamiroPalette.inkSoft,
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(color: MamiroPalette.coralDeep),
       ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(18),
+        borderSide: const BorderSide(
+          color: MamiroPalette.coralDeep,
+          width: 1.6,
+        ),
+      ),
+      labelStyle: const TextStyle(fontFamily: font, color: inkSoft),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) return paper;
-        return MamiroPalette.inkSoft;
+        if (states.contains(WidgetState.selected)) return surface;
+        return inkSoft;
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) return sage;
-        return MamiroPalette.line;
+        if (states.contains(WidgetState.selected)) return cobalt;
+        return MamiroPalette.surfaceMuted;
+      }),
+      trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) return cobalt;
+        return MamiroPalette.outlineStrong;
       }),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: sage,
-        foregroundColor: paper,
-        textStyle: const TextStyle(
-          fontFamily: 'Outfit',
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
+        backgroundColor: cobalt,
+        foregroundColor: surface,
+        textStyle: buttonText,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        shape: pill,
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: sage,
-        side: const BorderSide(color: sage),
-        textStyle: const TextStyle(
-          fontFamily: 'Outfit',
-          fontWeight: FontWeight.w600,
-          fontSize: 16,
-        ),
+        backgroundColor: surface,
+        foregroundColor: cobalt,
+        side: const BorderSide(color: MamiroPalette.outlineStrong),
+        textStyle: buttonText,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        shape: pill,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: sage,
+        foregroundColor: cobalt,
         textStyle: const TextStyle(
-          fontFamily: 'Outfit',
-          fontWeight: FontWeight.w600,
+          fontFamily: font,
+          fontWeight: FontWeight.w700,
+        ),
+        shape: pill,
+      ),
+    ),
+    segmentedButtonTheme: SegmentedButtonThemeData(
+      style: ButtonStyle(
+        backgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return cobalt;
+          return surface;
+        }),
+        foregroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return surface;
+          return ink;
+        }),
+        side: const WidgetStatePropertyAll(
+          BorderSide(color: MamiroPalette.outlineStrong),
+        ),
+        textStyle: const WidgetStatePropertyAll(
+          TextStyle(fontFamily: font, fontWeight: FontWeight.w700),
         ),
       ),
     ),
-    dialogTheme: DialogThemeData(
-      backgroundColor: paper,
-      titleTextStyle: const TextStyle(
-        fontFamily: 'Fraunces',
-        fontSize: 22,
-        fontWeight: FontWeight.w600,
+    chipTheme: ChipThemeData(
+      backgroundColor: surface,
+      selectedColor: cobalt,
+      side: const BorderSide(color: MamiroPalette.outlineStrong),
+      shape: pill,
+      labelStyle: const TextStyle(
+        fontFamily: font,
+        fontWeight: FontWeight.w700,
         color: ink,
       ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: cobalt,
+      foregroundColor: surface,
+      shape: pill,
+      extendedTextStyle: buttonText,
+    ),
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      titleTextStyle: const TextStyle(
+        fontFamily: font,
+        fontSize: 22,
+        fontWeight: FontWeight.w800,
+        color: cobalt,
+      ),
       contentTextStyle: const TextStyle(
-        fontFamily: 'Outfit',
+        fontFamily: font,
         fontSize: 15,
-        color: MamiroPalette.inkSoft,
+        color: inkSoft,
         height: 1.4,
       ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+      ),
+    ),
+    popupMenuTheme: PopupMenuThemeData(
+      color: surface,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      textStyle: const TextStyle(fontFamily: font, color: ink),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: sage,
-      contentTextStyle: const TextStyle(fontFamily: 'Outfit', color: paper),
+      backgroundColor: ink,
+      contentTextStyle: const TextStyle(fontFamily: font, color: surface),
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
     ),
     timePickerTheme: const TimePickerThemeData(
-      backgroundColor: paper,
-      dialHandColor: sage,
+      backgroundColor: surface,
+      dialHandColor: cobalt,
       hourMinuteTextColor: ink,
-      dayPeriodColor: MamiroPalette.sageMist,
+      dayPeriodColor: MamiroPalette.cobaltMist,
     ),
   );
 }

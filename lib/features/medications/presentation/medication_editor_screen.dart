@@ -5,14 +5,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mamiro/core/app_log.dart';
-import 'package:mamiro/core/copy.dart';
-import 'package:mamiro/core/format.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/features/medications/presentation/medications_notifier.dart';
 import 'package:mamiro/features/medications/presentation/widgets/color_picker.dart';
 import 'package:mamiro/features/medications/presentation/widgets/shape_picker.dart';
 import 'package:mamiro/features/medications/presentation/widgets/weekday_picker.dart';
+import 'package:mamiro/l10n/l10n.dart';
+import 'package:mamiro/routing/routes.dart';
 import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/circle_button.dart';
 
 final class MedicationEditorScreen extends ConsumerStatefulWidget {
   const MedicationEditorScreen({super.key, this.medicationId});
@@ -42,15 +43,21 @@ final class _MedicationEditorScreenState
   PillColor _color = PillColor.sage;
   List<int> _times = [8 * 60];
   Set<int> _days = {};
+  bool _specificDays = false;
   bool _trackPills = false;
+  bool _submitted = false;
   String? _hydratedId;
-  String? _timeError;
+  bool _timeError = false;
+  bool _daysError = false;
 
   bool get _isEditing => widget.medicationId != null;
 
   @override
   void initState() {
     super.initState();
+    // The refill warning follows both numbers as they are typed.
+    _quantity.addListener(_refresh);
+    _threshold.addListener(_refresh);
     _tryHydrate(ref.read(medicationsNotifierProvider).value);
     _medicationsSubscription = ref.listenManual(medicationsNotifierProvider, (
       previous,
@@ -72,9 +79,9 @@ final class _MedicationEditorScreenState
       }
       final failure = next.failure;
       if (failure != null && failure != previous?.failure) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(storageFailureMessage(failure))));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.formats.storageFailure(failure))),
+        );
         ref.read(medicationsFeedbackProvider.notifier).clear();
       }
     });
@@ -82,6 +89,8 @@ final class _MedicationEditorScreenState
 
   @override
   void dispose() {
+    _quantity.removeListener(_refresh);
+    _threshold.removeListener(_refresh);
     _feedbackSubscription.close();
     _medicationsSubscription.close();
     _name.dispose();
@@ -92,33 +101,70 @@ final class _MedicationEditorScreenState
     super.dispose();
   }
 
+  void _refresh() {
+    if (mounted) setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isEditing && _hydratedId == null) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+    final l10n = context.l10n;
+    final formats = context.formats;
+    final textTheme = Theme.of(context).textTheme;
+    final errorStyle = textTheme.bodyMedium?.copyWith(
+      color: Theme.of(context).colorScheme.error,
+    );
+    final quantity = int.tryParse(_quantity.text);
+    final threshold = int.tryParse(_threshold.text);
+    final atRefillLevel =
+        _trackPills &&
+        quantity != null &&
+        threshold != null &&
+        quantity <= threshold;
     return Form(
+      autovalidateMode: _submitted
+          ? AutovalidateMode.onUserInteraction
+          : AutovalidateMode.disabled,
       child: Builder(
         builder: (formContext) => Scaffold(
           appBar: AppBar(
-            title: Text(_isEditing ? 'Edit medication' : 'Add medication'),
-            actions: [
-              TextButton(
-                onPressed: () => _save(formContext),
-                child: const Text('Save'),
+            leadingWidth: 72,
+            toolbarHeight: 72,
+            leading: Padding(
+              padding: const EdgeInsetsDirectional.only(start: 20),
+              child: Center(
+                child: CircleButton(
+                  icon: Icons.arrow_back,
+                  tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+                  onPressed: _close,
+                ),
               ),
-            ],
+            ),
+            title: Text(
+              _isEditing ? l10n.editorEditTitle : l10n.editorAddTitle,
+            ),
+          ),
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
+              child: FilledButton(
+                onPressed: () => _save(formContext),
+                child: Text(l10n.save),
+              ),
+            ),
           ),
           body: ListView(
-            padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
             children: [
               TextFormField(
                 controller: _name,
                 textCapitalization: TextCapitalization.words,
-                decoration: const InputDecoration(labelText: 'Name'),
+                decoration: InputDecoration(labelText: l10n.fieldName),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Give it a name';
+                    return l10n.nameRequired;
                   }
                   return null;
                 },
@@ -126,134 +172,165 @@ final class _MedicationEditorScreenState
               const SizedBox(height: 12),
               TextFormField(
                 controller: _dosage,
-                decoration: const InputDecoration(
-                  labelText: 'Dosage',
-                  hintText: '10 mg',
+                decoration: InputDecoration(
+                  labelText: l10n.fieldDosage,
+                  hintText: l10n.dosageHint,
                 ),
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) {
-                    return 'Add a dosage';
+                    return l10n.dosageRequired;
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 12),
-              TextFormField(
-                controller: _notes,
-                decoration: const InputDecoration(
-                  labelText: 'Notes',
-                  hintText: 'with breakfast',
-                ),
-                minLines: 1,
-                maxLines: 3,
-              ),
-              const SizedBox(height: 24),
-              Text('Shape', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 10),
-              ShapePicker(
-                shape: _shape,
-                color: _color,
-                onChanged: (value) => setState(() => _shape = value),
-              ),
-              const SizedBox(height: 20),
-              Text('Color', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 10),
-              ColorPicker(
-                color: _color,
-                onChanged: (value) => setState(() => _color = value),
-              ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
               Row(
                 children: [
                   Expanded(
                     child: Text(
-                      'Times',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      l10n.sectionTimes,
+                      style: textTheme.titleMedium,
                     ),
                   ),
                   TextButton.icon(
-                    onPressed: _addTime,
+                    onPressed: _pickTime,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Add time'),
+                    label: Text(l10n.addTime),
                   ),
                 ],
               ),
-              if (_timeError case final message?)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    message,
-                    style: Theme.of(context).textTheme.bodyMedium
-                        ?.copyWith(color: Theme.of(context).colorScheme.error),
-                  ),
-                ),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   for (final minutes in _times)
                     InputChip(
-                      label: Text(formatMinutes(minutes)),
+                      label: Text(
+                        formats.minutes(minutes),
+                        style: textTheme.titleMedium,
+                      ),
+                      avatar: const Icon(
+                        Icons.schedule,
+                        size: 18,
+                        color: MamiroPalette.cobalt,
+                      ),
+                      backgroundColor: MamiroPalette.surface,
+                      side: const BorderSide(
+                        color: MamiroPalette.outlineStrong,
+                      ),
+                      onPressed: () => _pickTime(replacing: minutes),
                       onDeleted: _times.length == 1
                           ? null
                           : () => setState(() => _times.remove(minutes)),
                     ),
                 ],
               ),
-              const SizedBox(height: 24),
-              Text('Days', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 6),
               Text(
-                'None selected means every day.',
-                style: Theme.of(context).textTheme.bodyMedium,
+                _timeError ? l10n.timesRequired : l10n.timeHelp,
+                style: _timeError ? errorStyle : textTheme.bodyMedium,
               ),
+              const SizedBox(height: 28),
+              Text(l10n.sectionDays, style: textTheme.titleMedium),
               const SizedBox(height: 10),
-              WeekdayPicker(
-                days: _days,
-                onToggle: (weekday) {
-                  setState(() {
-                    if (_days.contains(weekday)) {
-                      _days.remove(weekday);
-                    } else {
-                      _days.add(weekday);
-                    }
-                  });
-                },
+              SizedBox(
+                width: double.infinity,
+                child: SegmentedButton<bool>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(value: false, label: Text(l10n.everyDay)),
+                    ButtonSegment(value: true, label: Text(l10n.daysSpecific)),
+                  ],
+                  selected: {_specificDays},
+                  onSelectionChanged: (selection) => setState(() {
+                    _specificDays = selection.single;
+                    _daysError = false;
+                  }),
+                ),
               ),
-              const SizedBox(height: 24),
+              if (_specificDays) ...[
+                const SizedBox(height: 12),
+                WeekdayPicker(
+                  days: _days,
+                  onToggle: (weekday) {
+                    setState(() {
+                      if (!_days.remove(weekday)) _days.add(weekday);
+                      _daysError = false;
+                    });
+                  },
+                ),
+                if (_daysError) ...[
+                  const SizedBox(height: 6),
+                  Text(l10n.daysRequired, style: errorStyle),
+                ],
+              ],
+              const SizedBox(height: 28),
+              Text(l10n.sectionInventory, style: textTheme.titleMedium),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Track remaining pills'),
+                title: Text(l10n.trackPills),
+                subtitle: Text(l10n.trackPillsHelp),
                 value: _trackPills,
                 onChanged: (value) => setState(() => _trackPills = value),
               ),
               if (_trackPills) ...[
+                const SizedBox(height: 4),
                 TextFormField(
                   controller: _quantity,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Pill count'),
-                  validator: _wholeNumberValidator('Add a count'),
+                  decoration: InputDecoration(labelText: l10n.pillCount),
+                  validator: _wholeNumberValidator(l10n.countRequired),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
                   controller: _threshold,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(
-                    labelText: 'Refill when at or below',
-                  ),
-                  validator: _wholeNumberValidator('Add a refill threshold'),
+                  decoration: InputDecoration(labelText: l10n.thresholdField),
+                  validator: _wholeNumberValidator(l10n.thresholdRequired),
                 ),
+                if (atRefillLevel) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    l10n.thresholdWarning,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: MamiroPalette.coralDeep,
+                    ),
+                  ),
+                ],
               ],
+              const SizedBox(height: 28),
+              Text(l10n.sectionAppearance, style: textTheme.titleMedium),
+              const SizedBox(height: 10),
+              ShapePicker(
+                shape: _shape,
+                color: _color,
+                onChanged: (value) => setState(() => _shape = value),
+              ),
+              const SizedBox(height: 14),
+              ColorPicker(
+                color: _color,
+                onChanged: (value) => setState(() => _color = value),
+              ),
+              const SizedBox(height: 28),
+              TextFormField(
+                controller: _notes,
+                decoration: InputDecoration(
+                  labelText: l10n.fieldNotes,
+                  hintText: l10n.notesHint,
+                ),
+                minLines: 1,
+                maxLines: 3,
+              ),
               if (_isEditing) ...[
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 TextButton(
                   onPressed: _delete,
                   style: TextButton.styleFrom(
-                    foregroundColor: MamiroPalette.terracotta,
+                    foregroundColor: MamiroPalette.coralDeep,
                   ),
-                  child: const Text('Delete medication'),
+                  child: Text(l10n.deleteMedication),
                 ),
               ],
             ],
@@ -263,46 +340,57 @@ final class _MedicationEditorScreenState
     );
   }
 
+  void _close() {
+    final router = GoRouter.of(context);
+    if (router.canPop()) {
+      router.pop();
+    } else {
+      router.go(Routes.medications);
+    }
+  }
+
   FormFieldValidator<String> _wholeNumberValidator(String emptyMessage) {
     return (value) {
       if (!_trackPills) return null;
       if (value == null || value.isEmpty) return emptyMessage;
-      if (int.tryParse(value) == null) return 'Enter a whole number';
+      if (int.tryParse(value) == null) return context.l10n.wholeNumber;
       return null;
     };
   }
 
-  void _addTime() {
+  void _pickTime({int? replacing}) {
     unawaited(
-      _pickTime().catchError(
+      _choose(replacing).catchError(
         unexpectedLogger('mamiro.medications', 'medication_editor.intent'),
       ),
     );
   }
 
-  Future<void> _pickTime() async {
+  Future<void> _choose(int? replacing) async {
+    final initial = replacing ?? 8 * 60;
     final picked = await showTimePicker(
       context: context,
-      initialTime: const TimeOfDay(hour: 8, minute: 0),
+      initialTime: TimeOfDay(hour: initial ~/ 60, minute: initial % 60),
     );
-    if (picked == null) return;
-    if (!mounted) return;
+    if (picked == null || !mounted) return;
     final minutes = picked.hour * 60 + picked.minute;
     setState(() {
-      if (!_times.contains(minutes)) {
-        _times = [..._times, minutes]..sort();
-      }
-      _timeError = null;
+      final times = {..._times};
+      if (replacing != null) times.remove(replacing);
+      times.add(minutes);
+      _times = times.toList()..sort();
+      _timeError = false;
     });
   }
 
   void _save(BuildContext formContext) {
     final valid = Form.of(formContext).validate();
-    if (_times.isEmpty) {
-      setState(() => _timeError = 'Add at least one time');
-      return;
-    }
-    if (!valid) return;
+    setState(() {
+      _submitted = true;
+      _timeError = _times.isEmpty;
+      _daysError = _specificDays && _days.isEmpty;
+    });
+    if (!valid || _timeError || _daysError) return;
     final quantity = _trackPills ? int.tryParse(_quantity.text) : null;
     final threshold = _trackPills ? int.tryParse(_threshold.text) : null;
     if (_trackPills && (quantity == null || threshold == null)) return;
@@ -323,7 +411,8 @@ final class _MedicationEditorScreenState
         shape: _shape,
         color: _color,
         timesMinutes: [..._times]..sort(),
-        daysOfWeek: (_days.toList()..sort()),
+        daysOfWeek: _specificDays ? (_days.toList()..sort()) : const [],
+        startsOn: existing?.startsOn,
         quantity: quantity,
         refillThreshold: threshold,
       ),
@@ -350,19 +439,19 @@ final class _MedicationEditorScreenState
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Remove from the cabinet?'),
-          content: Text('${existing.name} will leave today\'s list.'),
+          title: Text(context.l10n.deleteTitle),
+          content: Text(context.l10n.deleteBody(existing.name)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text(context.l10n.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: MamiroPalette.terracotta,
+                foregroundColor: MamiroPalette.coralDeep,
               ),
-              child: const Text('Delete'),
+              child: Text(context.l10n.delete),
             ),
           ],
         );
@@ -391,6 +480,7 @@ final class _MedicationEditorScreenState
     _color = existing.color;
     _times = [...existing.timesMinutes]..sort();
     _days = {...existing.daysOfWeek};
+    _specificDays = existing.daysOfWeek.isNotEmpty;
     _trackPills = existing.tracksPills;
     _quantity.text = existing.quantity?.toString() ?? '';
     _threshold.text = existing.refillThreshold?.toString() ?? '';

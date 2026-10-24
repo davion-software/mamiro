@@ -1,7 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/palette.dart';
 
+/// Every pill color on a single row, sized to the available width.
 final class ColorPicker extends StatelessWidget {
   const ColorPicker({required this.color, required this.onChanged, super.key});
 
@@ -10,32 +14,50 @@ final class ColorPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      spacing: 10,
-      runSpacing: 10,
-      children: [
-        for (final value in PillColor.values)
-          Semantics(
-            label: pillColorName(value),
-            button: true,
-            child: GestureDetector(
-              onTap: () => onChanged(value),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: colorFor(value),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: color == value
-                        ? MamiroPalette.ink
-                        : Colors.transparent,
-                    width: 2.4,
+    final count = PillColor.values.length;
+    const gap = 6.0;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = math
+            .min(40, (constraints.maxWidth - gap * (count - 1)) / count)
+            .toDouble();
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            for (final value in PillColor.values)
+              Semantics(
+                label: context.formats.color(value),
+                selected: color == value,
+                button: true,
+                child: GestureDetector(
+                  onTap: () => onChanged(value),
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: colorFor(value),
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: color == value
+                            ? MamiroPalette.ink
+                            : Colors.transparent,
+                        width: 2.4,
+                      ),
+                    ),
+                    child: SizedBox.square(
+                      dimension: size,
+                      child: color == value
+                          ? const Icon(
+                              Icons.check,
+                              size: 18,
+                              color: MamiroPalette.surface,
+                            )
+                          : null,
+                    ),
                   ),
                 ),
-                child: const SizedBox(width: 36, height: 36),
               ),
-            ),
-          ),
-      ],
+          ],
+        );
+      },
     );
   }
 }

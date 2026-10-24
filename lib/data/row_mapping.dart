@@ -35,6 +35,7 @@ Medication medicationFromRow(
     daysOfWeek: daysOfWeek,
     quantity: row.quantity,
     refillThreshold: row.refillThreshold,
+    startsOn: localDateTime(row.createdAtUtcMs),
   );
 }
 

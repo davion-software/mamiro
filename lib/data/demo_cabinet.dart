@@ -1,16 +1,19 @@
 import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/l10n/l10n.dart';
 
-List<Medication> demoCabinet() {
-  return const [
+/// The sample cabinet, in the device language unless [l10n] is given.
+List<Medication> demoCabinet([AppLocalizations? l10n]) {
+  final copy = l10n ?? platformLocalizations();
+  return [
     Medication(
       id: 'demo-vitamin-d3',
-      name: 'Vitamin D3',
+      name: copy.demoVitaminD3,
       dosage: '2000 IU',
-      notes: 'with breakfast',
+      notes: copy.demoWithBreakfast,
       shape: PillShape.capsule,
       color: PillColor.sand,
-      timesMinutes: [8 * 60],
-      daysOfWeek: [],
+      timesMinutes: const [8 * 60],
+      daysOfWeek: const [],
       quantity: 8,
       refillThreshold: 10,
     ),
@@ -18,11 +21,11 @@ List<Medication> demoCabinet() {
       id: 'demo-omega-3',
       name: 'Omega-3',
       dosage: '1000 mg',
-      notes: 'with breakfast',
+      notes: copy.demoWithBreakfast,
       shape: PillShape.softgel,
       color: PillColor.moss,
-      timesMinutes: [8 * 60],
-      daysOfWeek: [],
+      timesMinutes: const [8 * 60],
+      daysOfWeek: const [],
       quantity: 40,
       refillThreshold: 10,
     ),
@@ -30,23 +33,23 @@ List<Medication> demoCabinet() {
       id: 'demo-lisinopril',
       name: 'Lisinopril',
       dosage: '10 mg',
-      notes: 'same times each day',
+      notes: copy.demoSameTimes,
       shape: PillShape.tablet,
       color: PillColor.terracotta,
-      timesMinutes: [8 * 60, 20 * 60],
-      daysOfWeek: [],
+      timesMinutes: const [8 * 60, 20 * 60],
+      daysOfWeek: const [],
       quantity: 20,
       refillThreshold: 6,
     ),
     Medication(
       id: 'demo-magnesium',
-      name: 'Magnesium',
+      name: copy.demoMagnesium,
       dosage: '400 mg',
-      notes: 'before bed',
+      notes: copy.demoBeforeBed,
       shape: PillShape.capsule,
       color: PillColor.slate,
-      timesMinutes: [21 * 60],
-      daysOfWeek: [],
+      timesMinutes: const [21 * 60],
+      daysOfWeek: const [],
       quantity: 30,
       refillThreshold: 8,
     ),

@@ -10,15 +10,15 @@ final class BannerStrip extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: MamiroPalette.sageMist,
-        borderRadius: BorderRadius.circular(16),
+        color: MamiroPalette.coralMist,
+        borderRadius: BorderRadius.circular(999),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         child: Text(
           text,
           style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: MamiroPalette.sage),
+              ?.copyWith(color: MamiroPalette.coralDeep),
         ),
       ),
     );

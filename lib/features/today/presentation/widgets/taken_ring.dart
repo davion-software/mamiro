@@ -27,7 +27,7 @@ final class TakenRing extends StatelessWidget {
           child: Text(
             '$taken/$total',
             style: const TextStyle(
-              fontFamily: 'Fraunces',
+              fontFamily: MamiroPalette.fontFamily,
               fontWeight: FontWeight.w600,
               fontSize: 16,
               color: MamiroPalette.ink,
@@ -49,11 +49,11 @@ class _RingPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 5;
     final background = Paint()
-      ..color = MamiroPalette.sageMist
+      ..color = MamiroPalette.ringTrack
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7;
     final foreground = Paint()
-      ..color = MamiroPalette.sage
+      ..color = MamiroPalette.coralStrong
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7
       ..strokeCap = StrokeCap.round;

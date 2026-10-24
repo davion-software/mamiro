@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mamiro/core/app_log.dart';
-import 'package:mamiro/core/copy.dart';
+import 'package:mamiro/core/dose_slot.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/l10n/l10n.dart';
+import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/widgets/coral_chip.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/sky_background.dart';
 
 final class AlarmOverlay extends ConsumerStatefulWidget {
   const AlarmOverlay({super.key});
@@ -39,6 +43,21 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
     super.dispose();
   }
 
+  /// While this overlay rings on screen it replaces the OS alarms, including
+  /// ones the OS delivers a moment after the overlay appeared. In the
+  /// background the OS alarms must keep ringing.
+  void _takeOverSystemAlarms() {
+    if (WidgetsBinding.instance.lifecycleState != AppLifecycleState.resumed) {
+      return;
+    }
+    unawaited(
+      ref
+          .read(alarmGatewayProvider)
+          .dismissDelivered()
+          .catchError(unexpectedLogger('mamiro.alarm', 'alarm.dismiss')),
+    );
+  }
+
   void _syncFeedback(AlarmState? alarm) {
     final alarmId = alarm?.slot.id;
     if (alarmId == _activeAlarmId) return;
@@ -58,6 +77,7 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
       _stopFeedback();
       return;
     }
+    if (!alarm.slot.isTest) _takeOverSystemAlarms();
     if (alarm.settings.sound) {
       unawaited(
         SystemSound.play(SystemSoundType.alert)
@@ -84,125 +104,306 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
   Widget build(BuildContext context) {
     final alarm = ref.watch(alarmNotifierProvider).value;
     if (alarm == null) return const SizedBox.shrink();
+    final l10n = context.l10n;
+    final formats = context.formats;
     final slot = alarm.slot;
     final med = slot.medication;
-    final snooze = alarm.settings.snoozeMinutes;
+    final others = [
+      for (final other in alarm.dueSlots)
+        if (other.id != slot.id) other,
+    ];
+    final count = others.length + 1;
     final notifier = ref.read(alarmNotifierProvider.notifier);
     final actionFailure = alarm.actionFailure;
+    final detail = [
+      if (med.dosage.isNotEmpty) med.dosage,
+      if (med.notes.isNotEmpty) med.notes,
+    ].join(' · ');
+    final textTheme = Theme.of(context).textTheme;
     return Material(
-      color: MamiroPalette.sage,
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(28, 24, 28, 28),
-          child: Column(
-            children: [
-              const Text(
-                'Dose due',
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: 1.4,
-                  color: Color(0xFFD5DFD4),
+      type: MaterialType.transparency,
+      child: SkyBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
+            child: Column(
+              children: [
+                CoralChip(
+                  icon: Icons.notifications_active_outlined,
+                  label: slot.isTest
+                      ? l10n.alarmTestLabel
+                      : count > 1
+                      ? '${l10n.alarmDoseDue} · ${l10n.alarmCounter(1, count)}'
+                      : l10n.alarmDoseDue,
                 ),
-              ),
-              Expanded(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          alarm.clockLabel,
-                          style: const TextStyle(
-                            fontFamily: 'Fraunces',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 72,
-                            height: 1,
-                            color: MamiroPalette.paper,
-                          ),
-                        ),
-                        const SizedBox(height: 36),
-                        PillGlyph(shape: med.shape, color: med.color, size: 88),
-                        const SizedBox(height: 28),
-                        Text(
-                          med.name,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontFamily: 'Fraunces',
-                            fontWeight: FontWeight.w600,
-                            fontSize: 34,
-                            color: MamiroPalette.paper,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          med.dosage,
-                          style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 18,
-                            color: Color(0xFFD5DFD4),
-                          ),
-                        ),
-                        if (med.notes.isNotEmpty) ...[
-                          const SizedBox(height: 6),
-                          Text(
-                            med.notes,
-                            style: const TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 15,
-                              color: Color(0xFFD5DFD4),
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _PillArt(slot: slot),
+                          const SizedBox(height: 24),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 330),
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: med.name),
+                                  if (detail.isNotEmpty)
+                                    TextSpan(
+                                      text: '\n$detail',
+                                      style: const TextStyle(
+                                        color: MamiroPalette.inkSoft,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0,
+                                        height: 1.6,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              textAlign: TextAlign.center,
+                              style: textTheme.displayMedium?.copyWith(
+                                fontSize: 38,
+                              ),
                             ),
                           ),
+                          if (others.isNotEmpty) ...[
+                            const SizedBox(height: 12),
+                            ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 320),
+                              child: Text(
+                                l10n.alarmAlsoDue(
+                                  others
+                                      .map((other) => other.medication.name)
+                                      .join(', '),
+                                ),
+                                textAlign: TextAlign.center,
+                                style: textTheme.bodyMedium,
+                              ),
+                            ),
+                          ],
                         ],
+                      ),
+                    ),
+                  ),
+                ),
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: MamiroPalette.surface,
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: [
+                      BoxShadow(
+                        color: MamiroPalette.cobalt.withValues(alpha: 0.1),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                    child: Column(
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            color: MamiroPalette.surfaceMuted,
+                            borderRadius: BorderRadius.circular(999),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 6,
+                            ),
+                            child: Text(
+                              _lateness(l10n, slot, alarm.now),
+                              style: textTheme.labelLarge,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          formats.clock(slot.scheduledAt),
+                          style: textTheme.displayMedium?.copyWith(
+                            fontSize: 48,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: _RoundAction(
+                                icon: Icons.close,
+                                label: l10n.skipAction,
+                                onTap: () => notifier.skip(slot.id),
+                              ),
+                            ),
+                            Expanded(
+                              child: _RoundAction(
+                                icon: Icons.check,
+                                label: l10n.takeEarly,
+                                primary: true,
+                                onTap: () => notifier.take(slot.id),
+                              ),
+                            ),
+                            Expanded(
+                              child: _RoundAction(
+                                icon: Icons.snooze,
+                                label: l10n.alarmSnooze(
+                                  alarm.settings.snoozeMinutes,
+                                ),
+                                onTap: () => notifier.snooze(slot.id),
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (count > 1)
+                          TextButton.icon(
+                            onPressed: notifier.takeAll,
+                            icon: const Icon(Icons.done_all, size: 18),
+                            label: Text(l10n.takeAll(count)),
+                          ),
+                        if (actionFailure != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              formats.storageFailure(actionFailure),
+                              textAlign: TextAlign.center,
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: MamiroPalette.coralDeep,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   ),
                 ),
-              ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _lateness(AppLocalizations l10n, DoseSlot slot, DateTime now) {
+    final late = now.difference(slot.scheduledAt).inMinutes;
+    if (slot.isTest || late < 1) return l10n.alarmOnTime;
+    if (late < 60) return l10n.alarmLateMinutes(late);
+    return l10n.alarmLateHours(late ~/ 60, late % 60);
+  }
+}
+
+/// The pill on a soft coral-to-sky tile, standing in for the reference's
+/// blurred photography.
+final class _PillArt extends StatelessWidget {
+  const _PillArt({required this.slot});
+
+  final DoseSlot slot;
+
+  @override
+  Widget build(BuildContext context) {
+    final med = slot.medication;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(44),
+        gradient: const RadialGradient(
+          center: Alignment(-0.35, -0.4),
+          radius: 1.1,
+          // Light enough that a coral or dark pill still stands out.
+          colors: [
+            MamiroPalette.surface,
+            MamiroPalette.coralMist,
+            MamiroPalette.skyBottom,
+          ],
+          stops: [0, 0.5, 1],
+        ),
+        border: Border.all(color: MamiroPalette.surface, width: 4),
+        boxShadow: [
+          BoxShadow(
+            color: MamiroPalette.coral.withValues(alpha: 0.3),
+            blurRadius: 30,
+            offset: const Offset(0, 12),
+          ),
+        ],
+      ),
+      child: SizedBox.square(
+        dimension: 168,
+        child: Center(
+          child: PillGlyph(shape: med.shape, color: med.color, size: 96),
+        ),
+      ),
+    );
+  }
+}
+
+final class _RoundAction extends StatelessWidget {
+  const _RoundAction({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.primary = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = primary ? 76.0 : 56.0;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(24),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4),
+          child: Column(
+            children: [
               SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () => notifier.take(slot.id),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: MamiroPalette.paper,
-                    foregroundColor: MamiroPalette.sage,
+                height: 84,
+                child: Center(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: primary
+                          ? MamiroPalette.coral
+                          : MamiroPalette.surfaceMuted,
+                      boxShadow: primary
+                          ? [
+                              BoxShadow(
+                                color: MamiroPalette.coral.withValues(
+                                  alpha: 0.25,
+                                ),
+                                spreadRadius: 7,
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: SizedBox.square(
+                      dimension: size,
+                      child: Icon(
+                        icon,
+                        size: primary ? 34 : 24,
+                        color: MamiroPalette.ink,
+                      ),
+                    ),
                   ),
-                  child: const Text('Take now'),
-                ),
-              ),
-              const SizedBox(height: 12),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => notifier.snooze(slot.id),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: MamiroPalette.paper,
-                    side: const BorderSide(color: MamiroPalette.paper),
-                  ),
-                  child: Text('Snooze $snooze min'),
                 ),
               ),
               const SizedBox(height: 4),
-              TextButton(
-                onPressed: () => notifier.skip(slot.id),
-                style: TextButton.styleFrom(
-                  foregroundColor: MamiroPalette.paper,
-                ),
-                child: const Text('Skip'),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge,
               ),
-              if (actionFailure != null) ...[
-                const SizedBox(height: 12),
-                Text(
-                  storageFailureMessage(actionFailure),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    color: MamiroPalette.paper,
-                  ),
-                ),
-              ],
             ],
           ),
         ),

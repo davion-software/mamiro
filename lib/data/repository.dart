@@ -97,8 +97,13 @@ final class MamiroRepository {
     }
   }
 
+  /// Seeds the demo cabinet on first launch. Its doses start on [now]'s day,
+  /// so a fresh install has no history of missed doses.
   @useResult
-  Future<Result<void, StorageFailure>> initialize() async {
+  Future<Result<void, StorageFailure>> initialize({
+    DateTime? now,
+    List<Medication>? demo,
+  }) async {
     final initialized = await _isInitialized();
     switch (initialized) {
       case Err(:final failure):
@@ -118,12 +123,16 @@ final class MamiroRepository {
               value ??
               Snapshot(
                 initialized: true,
-                medications: demoCabinet(),
+                medications: demo ?? demoCabinet(),
                 events: const [],
                 settings: AppSettings.defaults,
               );
           await _database.transaction(() async {
-            await _replaceSnapshot(snapshot, clearExisting: false);
+            await _replaceSnapshot(
+              snapshot,
+              clearExisting: false,
+              seededAt: value == null ? now : null,
+            );
             await _database
                 .into(_database.metadata)
                 .insert(
@@ -226,6 +235,67 @@ final class MamiroRepository {
     });
   }
 
+  /// Reverts a Take or Skip so the slot is open again. Undoing a Take puts
+  /// the pill back in the count.
+  @useResult
+  Future<Result<void, StorageFailure>> undoSlot({
+    required String medicationId,
+    required DateTime scheduledAt,
+    required DateTime now,
+  }) {
+    return _write('dose.undo', () {
+      return _database.transaction(() async {
+        final resolved = (_database.select(_database.doseEvents)
+          ..where(
+            (row) =>
+                row.medicationId.equals(medicationId) &
+                row.scheduledAtUtcMs.equals(utcMs(scheduledAt)) &
+                row.action.isIn(const ['taken', 'skipped']),
+          ));
+        final rows = await resolved.get();
+        if (rows.isEmpty) return;
+        await (_database.delete(
+          _database.doseEvents,
+        )..where((row) => row.id.isIn([for (final row in rows) row.id]))).go();
+        if (!rows.any((row) => row.action == DoseAction.taken.name)) return;
+        await _adjustQuantity(medicationId, 1, now);
+      });
+    });
+  }
+
+  @useResult
+  Future<Result<void, StorageFailure>> addPills({
+    required String medicationId,
+    required int count,
+    required DateTime now,
+  }) {
+    return _write('medication.restock', () {
+      return _database.transaction(
+        () => _adjustQuantity(medicationId, count, now),
+      );
+    });
+  }
+
+  Future<void> _adjustQuantity(
+    String medicationId,
+    int delta,
+    DateTime now,
+  ) async {
+    final medication = await (_database.select(
+      _database.medications,
+    )..where((row) => row.id.equals(medicationId))).getSingleOrNull();
+    final quantity = medication?.quantity;
+    if (medication == null || quantity == null) return;
+    await (_database.update(
+      _database.medications,
+    )..where((row) => row.id.equals(medicationId))).write(
+      MedicationsCompanion(
+        quantity: Value(quantity + delta < 0 ? 0 : quantity + delta),
+        updatedAtUtcMs: Value(utcMs(now)),
+      ),
+    );
+  }
+
   @useResult
   Future<Result<void, StorageFailure>> updateSettings(AppSettings settings) {
     return _write('settings.update', () {
@@ -254,6 +324,14 @@ final class MamiroRepository {
         await _retireCabinet(now);
         await _writeSettings(AppSettings.defaults);
       });
+    });
+  }
+
+  /// Re-runs every watch query. Writes made by another isolate, such as an
+  /// alarm action handled while the app was closed, are invisible otherwise.
+  void refreshWatchers() {
+    _database.notifyUpdates({
+      for (final table in _database.allTables) TableUpdate.onTable(table),
     });
   }
 
@@ -338,6 +416,7 @@ final class MamiroRepository {
   Future<void> _replaceSnapshot(
     Snapshot snapshot, {
     required bool clearExisting,
+    DateTime? seededAt,
   }) async {
     if (clearExisting) {
       await _database.delete(_database.doseEvents).go();
@@ -346,9 +425,11 @@ final class MamiroRepository {
       await _database.delete(_database.medications).go();
       await _database.delete(_database.settings).go();
     }
-    final importedAt = snapshot.events.isEmpty
-        ? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)
-        : snapshot.events.last.at;
+    final importedAt =
+        seededAt ??
+        (snapshot.events.isEmpty
+            ? DateTime.fromMillisecondsSinceEpoch(0, isUtc: true)
+            : snapshot.events.last.at);
     for (final medication in snapshot.medications) {
       await _writeMedication(medication, importedAt);
     }
@@ -376,7 +457,10 @@ final class MamiroRepository {
             quantity: Value(medication.quantity),
             refillThreshold: Value(medication.refillThreshold),
             isDeleted: const Value(false),
-            createdAtUtcMs: existing?.createdAtUtcMs ?? stamp,
+            // A restored medication starts over; its old history is gone.
+            createdAtUtcMs: existing == null || existing.isDeleted
+                ? stamp
+                : existing.createdAtUtcMs,
             updatedAtUtcMs: stamp,
             deletedAtUtcMs: const Value(null),
           ),

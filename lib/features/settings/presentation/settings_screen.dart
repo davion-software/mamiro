@@ -3,8 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mamiro/core/app_log.dart';
-import 'package:mamiro/core/copy.dart';
 import 'package:mamiro/features/settings/presentation/settings_notifier.dart';
+import 'package:mamiro/l10n/l10n.dart';
+import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/async_page.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
@@ -17,13 +18,18 @@ final class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(settingsFeedbackProvider, (previous, next) {
       final messenger = ScaffoldMessenger.of(context);
+      final l10n = context.l10n;
       final notice = next.notice;
       if (notice != null && notice != previous?.notice) {
+        final testAt = next.testAt;
         messenger.showSnackBar(
           SnackBar(
             content: Text(switch (notice) {
-              SettingsNotice.demoRestored => 'Demo cabinet restored',
-              SettingsNotice.cleared => 'All data cleared',
+              SettingsNotice.demoRestored => l10n.demoRestored,
+              SettingsNotice.cleared => l10n.cleared,
+              SettingsNotice.testScheduled => l10n.testScheduled(
+                testAt == null ? '' : context.formats.clock(testAt),
+              ),
             }),
           ),
         );
@@ -32,14 +38,14 @@ final class SettingsScreen extends ConsumerWidget {
       final failure = next.failure;
       if (failure != null && failure != previous?.failure) {
         messenger.showSnackBar(
-          SnackBar(content: Text(storageFailureMessage(failure))),
+          SnackBar(content: Text(context.formats.storageFailure(failure))),
         );
         ref.read(settingsFeedbackProvider.notifier).clear();
       }
     });
     return AsyncPage(
       value: ref.watch(settingsNotifierProvider),
-      errorMessage: 'Settings are temporarily unavailable.',
+      errorMessage: context.l10n.settingsUnavailable,
       builder: (state) => _SettingsContent(state: state),
     );
   }
@@ -52,45 +58,47 @@ final class _SettingsContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final textTheme = Theme.of(context).textTheme;
     final settings = state.settings;
     final notifier = ref.read(settingsNotifierProvider.notifier);
     return ListView(
-      padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 32),
+      padding: const EdgeInsetsDirectional.fromSTEB(24, 16, 24, 120),
       children: [
-        Text('Settings', style: Theme.of(context).textTheme.headlineLarge),
+        Text(l10n.settingsTitle, style: textTheme.headlineLarge),
         const SizedBox(height: 8),
-        Text(
-          'Alarms ring while Mamiro is open. iOS and Android will not wake a killed app for these reminders. Keep the app nearby at dose times, or pair with a system alarm if you need a backup.',
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        Text(l10n.settingsIntro, style: textTheme.bodyMedium),
         if (state.failure case final failure?) ...[
           const SizedBox(height: 16),
           StorageBanner(failure: failure),
         ],
-        const SizedBox(height: 24),
+        const SizedBox(height: 20),
+        SectionLabel(l10n.sectionAccess),
+        const _AlarmAccessCard(),
+        const SizedBox(height: 20),
+        SectionLabel(l10n.sectionAlarm),
         PaperCard(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: Column(
             children: [
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Sound'),
-                subtitle: const Text('Play a tone when a dose alarm appears'),
+                title: Text(l10n.sound),
+                subtitle: Text(l10n.soundHelp),
                 value: settings.sound,
                 onChanged: notifier.setSound,
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Vibration'),
-                subtitle: const Text('Pulse the device with the alarm'),
+                title: Text(l10n.vibration),
+                subtitle: Text(l10n.vibrationHelp),
                 value: settings.vibration,
                 onChanged: notifier.setVibration,
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
-                title: const Text('Banners'),
-                subtitle: const Text(
-                  'Show a due-now strip on Today when a dose is waiting',
-                ),
+                title: Text(l10n.banners),
+                subtitle: Text(l10n.bannersHelp),
                 value: settings.banners,
                 onChanged: notifier.setBanners,
               ),
@@ -98,8 +106,9 @@ final class _SettingsContent extends ConsumerWidget {
           ),
         ),
         const SizedBox(height: 20),
-        const SectionLabel('Snooze length'),
+        SectionLabel(l10n.sectionSnooze),
         PaperCard(
+          padding: const EdgeInsets.all(12),
           child: Row(
             children: [
               for (final minutes in const [5, 10, 15])
@@ -107,14 +116,22 @@ final class _SettingsContent extends ConsumerWidget {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ChoiceChip(
-                      label: Text('$minutes min'),
+                      // The checkmark squeezed the label in a third of a row.
+                      showCheckmark: false,
+                      label: SizedBox(
+                        width: double.infinity,
+                        child: Text(
+                          l10n.minutesShort(minutes),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
                       selected: settings.snoozeMinutes == minutes,
-                      selectedColor: MamiroPalette.sageMist,
+                      selectedColor: MamiroPalette.cobalt,
                       labelStyle: TextStyle(
-                        fontFamily: 'Outfit',
+                        fontFamily: MamiroPalette.fontFamily,
                         fontWeight: FontWeight.w600,
                         color: settings.snoozeMinutes == minutes
-                            ? MamiroPalette.sage
+                            ? MamiroPalette.surface
                             : MamiroPalette.ink,
                       ),
                       onSelected: (selected) {
@@ -127,23 +144,48 @@ final class _SettingsContent extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: 28),
+        const SizedBox(height: 20),
+        SectionLabel(l10n.sectionTest),
         FilledButton(
           onPressed: notifier.startTestAlarm,
-          child: const Text('Test alarm'),
+          child: Text(l10n.testNow),
         ),
         const SizedBox(height: 12),
         OutlinedButton(
-          onPressed: notifier.restoreDemo,
-          child: const Text('Restore demo cabinet'),
+          onPressed: notifier.scheduleClosedAppTest,
+          child: Text(l10n.testClosed),
         ),
-        const SizedBox(height: 12),
-        TextButton(
-          onPressed: () => _startConfirmClear(context, ref),
-          style: TextButton.styleFrom(
-            foregroundColor: MamiroPalette.terracotta,
+        const SizedBox(height: 6),
+        Text(
+          l10n.testClosedHelp,
+          textAlign: TextAlign.center,
+          style: textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 20),
+        PaperCard(
+          padding: EdgeInsets.zero,
+          child: Theme(
+            // Drop the expansion tile's own divider lines.
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              title: Text(l10n.sectionAdvanced, style: textTheme.titleMedium),
+              childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                OutlinedButton(
+                  onPressed: notifier.restoreDemo,
+                  child: Text(l10n.restoreDemo),
+                ),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => _startConfirmClear(context, ref),
+                  style: TextButton.styleFrom(
+                    foregroundColor: MamiroPalette.coralDeep,
+                  ),
+                  child: Text(l10n.clearAll),
+                ),
+              ],
+            ),
           ),
-          child: const Text('Clear all data'),
         ),
       ],
     );
@@ -158,25 +200,24 @@ final class _SettingsContent extends ConsumerWidget {
   }
 
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
     final ok = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Clear this device?'),
-          content: const Text(
-            'This removes every medication and log from this phone. It cannot be undone.',
-          ),
+          title: Text(l10n.clearTitle),
+          content: Text(l10n.clearBody),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
+              child: Text(l10n.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
-                foregroundColor: MamiroPalette.terracotta,
+                foregroundColor: MamiroPalette.coralDeep,
               ),
-              child: const Text('Clear all'),
+              child: Text(l10n.clearConfirm),
             ),
           ],
         );
@@ -184,5 +225,76 @@ final class _SettingsContent extends ConsumerWidget {
     );
     if (ok != true || !context.mounted) return;
     ref.read(settingsNotifierProvider.notifier).clearAll();
+  }
+}
+
+final class _AlarmAccessCard extends ConsumerWidget {
+  const _AlarmAccessCard();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final access = ref.watch(alarmAccessProvider).value ?? AlarmAccess.unknown;
+    final notifier = ref.read(settingsNotifierProvider.notifier);
+    return PaperCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Column(
+        children: [
+          _AccessTile(
+            title: l10n.accessNotifications,
+            subtitle: l10n.accessNotificationsHelp,
+            granted: access.notifications,
+            onAllow: notifier.openNotificationSettings,
+          ),
+          if (access.exactTiming case final exact?)
+            _AccessTile(
+              title: l10n.accessExact,
+              subtitle: l10n.accessExactHelp,
+              granted: exact,
+              onAllow: notifier.requestExactTiming,
+            ),
+          if (access.canRequestFullScreen)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.accessFullScreen),
+              subtitle: Text(l10n.accessFullScreenHelp),
+              trailing: TextButton(
+                onPressed: notifier.requestFullScreen,
+                child: Text(l10n.open),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _AccessTile extends StatelessWidget {
+  const _AccessTile({
+    required this.title,
+    required this.subtitle,
+    required this.granted,
+    required this.onAllow,
+  });
+
+  final String title;
+  final String subtitle;
+  final bool granted;
+  final VoidCallback onAllow;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(title),
+      subtitle: Text(subtitle),
+      trailing: granted
+          ? Icon(
+              Icons.check_circle,
+              color: MamiroPalette.cobalt,
+              semanticLabel: context.l10n.allowed,
+            )
+          : TextButton(onPressed: onAllow, child: Text(context.l10n.allow)),
+    );
   }
 }

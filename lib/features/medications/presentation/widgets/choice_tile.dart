@@ -16,11 +16,12 @@ final class ChoiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? MamiroPalette.sageMist : MamiroPalette.paperDeep,
+      color: selected ? MamiroPalette.cobaltMist : MamiroPalette.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: selected ? MamiroPalette.sage : MamiroPalette.line,
+          color: selected ? MamiroPalette.cobalt : MamiroPalette.outlineStrong,
+          width: selected ? 2 : 1,
         ),
       ),
       child: InkWell(
