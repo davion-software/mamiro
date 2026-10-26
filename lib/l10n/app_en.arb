@@ -347,5 +347,24 @@
   "themeCobaltPeach": "Cobalt & peach",
   "themeTealCoral": "Teal & coral",
   "themePlumPeach": "Plum & peach",
-  "themeDefault": "Default"
+  "themeDefault": "Default",
+  "earlyTakeTitle": "{count, plural, =1{Take {name} now?} other{Take {count} doses now?}}",
+  "earlyTakeBody": "It's scheduled for {time}.",
+  "@earlyTakeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@earlyTakeBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

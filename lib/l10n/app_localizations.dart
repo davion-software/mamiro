@@ -1171,6 +1171,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get themeDefault;
+
+  /// No description provided for @earlyTakeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Take {name} now?} other{Take {count} doses now?}}'**
+  String earlyTakeTitle(int count, String name);
+
+  /// No description provided for @earlyTakeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s scheduled for {time}.'**
+  String earlyTakeBody(String time);
 }
 
 class _AppLocalizationsDelegate

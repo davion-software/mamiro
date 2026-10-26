@@ -46,6 +46,8 @@ Future<void> pumpMamiro(
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues({});
   final now = at ?? DateTime(2026, 8, 26, 7);
+  // Unique ids: several writes in one test must not collide.
+  var nextId = 0;
   final database = AppDatabase(NativeDatabase.memory());
   addTearDown(database.close);
   final repository = MamiroRepository(database);
@@ -59,7 +61,7 @@ Future<void> pumpMamiro(
         appDatabaseProvider.overrideWithValue(database),
         mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(Clock.fixed(now)),
-        idGeneratorProvider.overrideWithValue(() => 'widget-medication'),
+        idGeneratorProvider.overrideWithValue(() => 'widget-id-${nextId++}'),
         alarmGatewayProvider.overrideWithValue(
           alarmGateway ?? FakeAlarmGateway(),
         ),
@@ -267,5 +269,45 @@ void main() {
     final context = tester.element(find.text('Teal & coral'));
     expect(context.colors, MamiroColors.of(ThemeChoice.tealCoral));
     expect(find.text('Default'), findsOneWidget);
+  });
+
+  testWidgets('taking the 20:00 dose at 7:00 asks first', (tester) async {
+    await pumpMamiro(tester);
+    expect(find.text('0/5'), findsOneWidget);
+
+    // The fourth dose on screen is Lisinopril at 20:00, under Later today.
+    await tester.tap(find.byTooltip('More actions').at(3));
+    await pumpAppFrames(tester);
+    await tester.tap(find.text('Take now'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('Take Lisinopril now?'), findsOneWidget);
+    expect(find.text("It's scheduled for 8:00\u202fPM."), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('Take Lisinopril now?'), findsNothing);
+    expect(find.text('0/5'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('More actions').at(3));
+    await pumpAppFrames(tester);
+    await tester.tap(find.text('Take now'));
+    await pumpAppFrames(tester);
+    await tester.tap(find.widgetWithText(TextButton, 'Take now'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('1/5'), findsOneWidget);
+  });
+
+  testWidgets('taking all 8:00 doses at 7:30 needs no confirmation', (
+    tester,
+  ) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 7, 30));
+
+    await tester.tap(find.text('Take all (3)'));
+    await pumpAppFrames(tester);
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('3/5'), findsOneWidget);
   });
 }
