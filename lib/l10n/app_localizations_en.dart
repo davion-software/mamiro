@@ -614,4 +614,32 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDefault => 'Default';
+
+  @override
+  String lateTakeTitleOne(String name) {
+    return 'When did you take $name?';
+  }
+
+  @override
+  String lateTakeTitleMany(int count) {
+    return 'When did you take these $count doses?';
+  }
+
+  @override
+  String lateTakeNow(String time) {
+    return 'Now ($time)';
+  }
+
+  @override
+  String lateTakeOnTime(String time) {
+    return 'On time ($time)';
+  }
+
+  @override
+  String get lateTakeOther => 'Another time…';
+
+  @override
+  String lateTakeAdjusted(String time) {
+    return 'Set to $time: it must be between the scheduled time and now.';
+  }
 }

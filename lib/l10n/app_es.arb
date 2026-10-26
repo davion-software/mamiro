@@ -178,5 +178,11 @@
   "themeCobaltPeach": "Cobalto y melocotón",
   "themeTealCoral": "Petróleo y coral",
   "themePlumPeach": "Ciruela y melocotón",
-  "themeDefault": "Predeterminado"
+  "themeDefault": "Predeterminado",
+  "lateTakeTitleOne": "¿Cuándo tomaste {name}?",
+  "lateTakeTitleMany": "¿Cuándo tomaste estas {count} tomas?",
+  "lateTakeNow": "Ahora ({time})",
+  "lateTakeOnTime": "A su hora ({time})",
+  "lateTakeOther": "Otra hora…",
+  "lateTakeAdjusted": "Ajustada a las {time}: debe estar entre la hora programada y ahora."
 }

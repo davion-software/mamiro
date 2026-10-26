@@ -620,4 +620,32 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeDefault => 'Predeterminado';
+
+  @override
+  String lateTakeTitleOne(String name) {
+    return '¿Cuándo tomaste $name?';
+  }
+
+  @override
+  String lateTakeTitleMany(int count) {
+    return '¿Cuándo tomaste estas $count tomas?';
+  }
+
+  @override
+  String lateTakeNow(String time) {
+    return 'Ahora ($time)';
+  }
+
+  @override
+  String lateTakeOnTime(String time) {
+    return 'A su hora ($time)';
+  }
+
+  @override
+  String get lateTakeOther => 'Otra hora…';
+
+  @override
+  String lateTakeAdjusted(String time) {
+    return 'Ajustada a las $time: debe estar entre la hora programada y ahora.';
+  }
 }

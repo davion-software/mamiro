@@ -1171,6 +1171,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get themeDefault;
+
+  /// No description provided for @lateTakeTitleOne.
+  ///
+  /// In en, this message translates to:
+  /// **'When did you take {name}?'**
+  String lateTakeTitleOne(String name);
+
+  /// No description provided for @lateTakeTitleMany.
+  ///
+  /// In en, this message translates to:
+  /// **'When did you take these {count} doses?'**
+  String lateTakeTitleMany(int count);
+
+  /// No description provided for @lateTakeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now ({time})'**
+  String lateTakeNow(String time);
+
+  /// No description provided for @lateTakeOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time ({time})'**
+  String lateTakeOnTime(String time);
+
+  /// No description provided for @lateTakeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another time…'**
+  String get lateTakeOther;
+
+  /// No description provided for @lateTakeAdjusted.
+  ///
+  /// In en, this message translates to:
+  /// **'Set to {time}: it must be between the scheduled time and now.'**
+  String lateTakeAdjusted(String time);
 }
 
 class _AppLocalizationsDelegate

@@ -196,6 +196,68 @@ void main() {
     );
     expect(restocked.next?.time, DateTime(2026, 8, 26, 20));
   });
+
+  test('a late take is logged at the reported time', () async {
+    SharedPreferences.setMockInitialValues({});
+    final now = DateTime(2026, 8, 26, 11);
+    final database = AppDatabase(NativeDatabase.memory());
+    addTearDown(database.close);
+    final repository = MamiroRepository(database);
+    expect(
+      await repository.initialize(now: DateTime(2026, 8, 20)),
+      isA<Ok<void, StorageFailure>>(),
+    );
+    var nextId = 0;
+    final container = ProviderContainer(
+      overrides: [
+        appDatabaseProvider.overrideWithValue(database),
+        mamiroRepositoryProvider.overrideWithValue(repository),
+        clockProvider.overrideWithValue(Clock.fixed(now)),
+        idGeneratorProvider.overrideWithValue(() => 'late-${nextId++}'),
+        currentMinuteProvider.overrideWithValue(AsyncData(now)),
+      ],
+    );
+    addTearDown(container.dispose);
+    final notifier = container.read(todayNotifierProvider.notifier);
+    final initial = await _waitForToday(
+      container,
+      (state) => state.due.isNotEmpty,
+    );
+    final vitamin = initial.due.single.slots.firstWhere(
+      (slot) => slot.medication.id == 'demo-vitamin-d3',
+    );
+    final takenAt = DateTime(2026, 8, 26, 8, 10);
+
+    notifier.take(vitamin.id, takenAt: takenAt);
+    final updated = await _waitForToday(
+      container,
+      (state) => state.refillSoon.single.quantity == 7,
+    );
+
+    final done = updated.done.single;
+    expect(done.id, vitamin.id);
+    expect(done.resolvedAt, takenAt);
+    final snapshot = await repository.readSnapshot();
+    final event = switch (snapshot) {
+      Ok(:final value) => value.events.single,
+      Err(:final failure) => fail('Unexpected failure: ${failure.code}'),
+    };
+    expect(event.at, takenAt);
+
+    final others = [
+      for (final slot in initial.due.single.slots)
+        if (slot.id != vitamin.id) slot.id,
+    ];
+    notifier.takeAll(others, takenAt: DateTime(2026, 8, 26, 8));
+    final all = await _waitForToday(
+      container,
+      (state) => state.takenCount == 3,
+    );
+    expect(
+      all.done.where((slot) => slot.id != vitamin.id).map((s) => s.resolvedAt),
+      everyElement(DateTime(2026, 8, 26, 8)),
+    );
+  });
 }
 
 Future<TodayState> _waitForToday(
