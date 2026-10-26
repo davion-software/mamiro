@@ -1171,6 +1171,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get themeDefault;
+
+  /// No description provided for @undoTaken.
+  ///
+  /// In en, this message translates to:
+  /// **'Taken: {name}'**
+  String undoTaken(String name);
+
+  /// No description provided for @undoSkipped.
+  ///
+  /// In en, this message translates to:
+  /// **'Skipped: {name}'**
+  String undoSkipped(String name);
+
+  /// No description provided for @undoRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 dose recorded} other{{count} doses recorded}}'**
+  String undoRecorded(int count);
 }
 
 class _AppLocalizationsDelegate

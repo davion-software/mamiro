@@ -121,9 +121,11 @@ final class _AlarmOverlayState extends ConsumerState<AlarmOverlay> {
       if (med.notes.isNotEmpty) med.notes,
     ].join(' · ');
     final textTheme = Theme.of(context).textTheme;
-    return Material(
-      type: MaterialType.transparency,
-      child: SkyBackground(
+    // A Scaffold of its own so snack bars, such as Undo, show above the
+    // alarm and not only on the screen hidden behind it.
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: SkyBackground(
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),

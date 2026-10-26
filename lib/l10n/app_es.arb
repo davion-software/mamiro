@@ -178,5 +178,8 @@
   "themeCobaltPeach": "Cobalto y melocotón",
   "themeTealCoral": "Petróleo y coral",
   "themePlumPeach": "Ciruela y melocotón",
-  "themeDefault": "Predeterminado"
+  "themeDefault": "Predeterminado",
+  "undoTaken": "Tomada: {name}",
+  "undoSkipped": "Omitida: {name}",
+  "undoRecorded": "{count, plural, =1{1 toma registrada} other{{count} tomas registradas}}"
 }

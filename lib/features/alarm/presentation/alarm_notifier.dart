@@ -11,6 +11,7 @@ import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/schedule.dart';
 import 'package:mamiro/core/storage_failure.dart';
 import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/features/undo/undo_notice.dart';
 import 'package:mamiro/services/app_providers.dart';
 import 'package:mamiro/services/async_combine.dart';
 
@@ -149,7 +150,8 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
     final alarm = state.value;
     if (alarm == null || alarm.slot.isTest) return;
     final now = ref.read(clockProvider).now();
-    for (final slot in alarm.dueSlots) {
+    final due = alarm.dueSlots;
+    for (final slot in due) {
       final result = await ref
           .read(mamiroRepositoryProvider)
           .recordSlot(
@@ -165,6 +167,7 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
         return;
       }
     }
+    ref.read(undoNoticeProvider.notifier).recorded(due, DoseAction.taken);
   }
 
   void skip(String slotId) {
@@ -204,7 +207,10 @@ final class AlarmNotifier extends Notifier<AsyncValue<AlarmState?>> {
     if (!ref.mounted) return;
     switch (result) {
       case Ok():
-        return;
+        // Snoozing brings the alarm back by itself, so it needs no Undo.
+        if (action != DoseAction.snoozed) {
+          ref.read(undoNoticeProvider.notifier).recorded([alarm.slot], action);
+        }
       case Err(:final failure):
         logFailure('mamiro.alarm', failure);
         state = AsyncData(alarm.copyWith(actionFailure: failure));

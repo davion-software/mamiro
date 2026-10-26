@@ -10,6 +10,7 @@ import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/schedule.dart';
 import 'package:mamiro/core/storage_failure.dart';
 import 'package:mamiro/data/providers.dart';
+import 'package:mamiro/features/undo/undo_notice.dart';
 import 'package:mamiro/data/repository.dart';
 import 'package:mamiro/services/app_providers.dart';
 import 'package:mamiro/services/async_combine.dart';
@@ -177,8 +178,8 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
 
   void take(String slotId) {
     unawaited(
-      _record(
-        slotId,
+      _recordAll(
+        [slotId],
         DoseAction.taken,
       ).catchError(unexpectedLogger('mamiro.today', 'today.intent')),
     );
@@ -186,8 +187,8 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
 
   void skip(String slotId) {
     unawaited(
-      _record(
-        slotId,
+      _recordAll(
+        [slotId],
         DoseAction.skipped,
       ).catchError(unexpectedLogger('mamiro.today', 'today.intent')),
     );
@@ -222,11 +223,15 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     );
   }
 
+  /// Records each slot, then offers Undo only if every write succeeded.
   Future<void> _recordAll(List<String> slotIds, DoseAction action) async {
+    final recorded = <DoseSlot>[];
     for (final slotId in slotIds) {
-      await _record(slotId, action);
-      if (!ref.mounted) return;
+      final slot = await _record(slotId, action);
+      if (!ref.mounted || slot == null) return;
+      recorded.add(slot);
     }
+    ref.read(undoNoticeProvider.notifier).recorded(recorded, action);
   }
 
   Future<void> _undo(String slotId) async {
@@ -256,13 +261,14 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     }
   }
 
-  Future<void> _record(String slotId, DoseAction action) async {
+  /// Returns the recorded slot, or null when nothing was written.
+  Future<DoseSlot?> _record(String slotId, DoseAction action) async {
     final current = state.value;
-    if (current == null) return;
+    if (current == null) return null;
     final slot = current.allSlots
         .where((item) => item.id == slotId)
         .firstOrNull;
-    if (slot == null) return;
+    if (slot == null) return null;
     final result = await ref
         .read(mamiroRepositoryProvider)
         .recordSlot(
@@ -271,13 +277,14 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
           now: ref.read(clockProvider).now(),
           eventId: ref.read(idGeneratorProvider)(),
         );
-    if (!ref.mounted) return;
+    if (!ref.mounted) return null;
     switch (result) {
       case Ok():
-        return;
+        return slot;
       case Err(:final failure):
         logFailure('mamiro.today', failure);
         state = AsyncData(current.copyWith(actionFailure: failure));
+        return null;
     }
   }
 }
