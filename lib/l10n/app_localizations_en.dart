@@ -614,4 +614,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDefault => 'Default';
+
+  @override
+  String get primerTitle => 'So Mamiro rings on time';
+
+  @override
+  String get primerClosedApp =>
+      'Alarms ring at dose time, even when the app is closed.';
+
+  @override
+  String get primerActions =>
+      'Take, snooze, or skip right from the notification.';
+
+  @override
+  String get primerLater => 'You can change this anytime in Settings.';
+
+  @override
+  String get primerAllow => 'Allow alarms';
+
+  @override
+  String get primerNotNow => 'Not now';
 }

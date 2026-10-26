@@ -1171,6 +1171,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get themeDefault;
+
+  /// No description provided for @primerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'So Mamiro rings on time'**
+  String get primerTitle;
+
+  /// No description provided for @primerClosedApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms ring at dose time, even when the app is closed.'**
+  String get primerClosedApp;
+
+  /// No description provided for @primerActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Take, snooze, or skip right from the notification.'**
+  String get primerActions;
+
+  /// No description provided for @primerLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this anytime in Settings.'**
+  String get primerLater;
+
+  /// No description provided for @primerAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow alarms'**
+  String get primerAllow;
+
+  /// No description provided for @primerNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get primerNotNow;
 }
 
 class _AppLocalizationsDelegate

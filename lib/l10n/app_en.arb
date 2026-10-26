@@ -347,5 +347,11 @@
   "themeCobaltPeach": "Cobalt & peach",
   "themeTealCoral": "Teal & coral",
   "themePlumPeach": "Plum & peach",
-  "themeDefault": "Default"
+  "themeDefault": "Default",
+  "primerTitle": "So Mamiro rings on time",
+  "primerClosedApp": "Alarms ring at dose time, even when the app is closed.",
+  "primerActions": "Take, snooze, or skip right from the notification.",
+  "primerLater": "You can change this anytime in Settings.",
+  "primerAllow": "Allow alarms",
+  "primerNotNow": "Not now"
 }

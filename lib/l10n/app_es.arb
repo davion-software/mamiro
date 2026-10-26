@@ -178,5 +178,11 @@
   "themeCobaltPeach": "Cobalto y melocotón",
   "themeTealCoral": "Petróleo y coral",
   "themePlumPeach": "Ciruela y melocotón",
-  "themeDefault": "Predeterminado"
+  "themeDefault": "Predeterminado",
+  "primerTitle": "Para que Mamiro suene a tiempo",
+  "primerClosedApp": "Las alarmas suenan a la hora de cada toma, aunque la app esté cerrada.",
+  "primerActions": "Puedes tomar, posponer u omitir desde la propia notificación.",
+  "primerLater": "Puedes cambiarlo cuando quieras en Ajustes.",
+  "primerAllow": "Permitir alarmas",
+  "primerNotNow": "Ahora no"
 }

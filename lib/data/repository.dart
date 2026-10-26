@@ -25,6 +25,7 @@ final class MamiroRepository {
 
   static const legacySnapshotKey = 'mamiro.snapshot.v1';
   static const _initializedKey = 'database.initialized';
+  static const _permissionPrimerKey = 'onboarding.permission_primer_shown';
 
   final AppDatabase _database;
   SharedPreferences? _legacyPreferences;
@@ -552,6 +553,34 @@ final class MamiroRepository {
       );
       return const Err(StorageUnavailable());
     }
+  }
+
+  /// Whether the alarm permission explanation has already been shown.
+  @useResult
+  Future<Result<bool, StorageFailure>> permissionPrimerShown() async {
+    try {
+      final row =
+          await (_database.select(_database.metadata)
+                ..where((item) => item.key.equals(_permissionPrimerKey)))
+              .getSingleOrNull();
+      return Ok(row != null);
+    } on SqliteException catch (error, stack) {
+      logUnexpected('mamiro.storage', 'primer.read', error, stack);
+      return const Err(StorageUnavailable());
+    }
+  }
+
+  /// Records that the explanation was shown, whatever the answer, so it
+  /// never appears again. Settings can still grant access later.
+  @useResult
+  Future<Result<void, StorageFailure>> markPermissionPrimerShown() {
+    return _write('primer.mark', () async {
+      await _database
+          .into(_database.metadata)
+          .insertOnConflictUpdate(
+            MetadataCompanion.insert(key: _permissionPrimerKey, value: '1'),
+          );
+    });
   }
 
   Future<Result<bool, StorageFailure>> _isInitialized() async {
