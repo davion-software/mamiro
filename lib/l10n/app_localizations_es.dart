@@ -620,4 +620,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeDefault => 'Predeterminado';
+
+  @override
+  String get accessBannerNotifications =>
+      'Las alarmas no sonarán con la app cerrada';
+
+  @override
+  String get accessBannerExact => 'Las alarmas pueden sonar con retraso';
+
+  @override
+  String get accessBannerEnable => 'Activar';
 }

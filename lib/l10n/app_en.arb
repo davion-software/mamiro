@@ -347,5 +347,8 @@
   "themeCobaltPeach": "Cobalt & peach",
   "themeTealCoral": "Teal & coral",
   "themePlumPeach": "Plum & peach",
-  "themeDefault": "Default"
+  "themeDefault": "Default",
+  "accessBannerNotifications": "Alarms won't ring while the app is closed",
+  "accessBannerExact": "Alarms may ring late",
+  "accessBannerEnable": "Turn on"
 }

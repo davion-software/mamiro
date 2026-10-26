@@ -178,5 +178,8 @@
   "themeCobaltPeach": "Cobalto y melocotón",
   "themeTealCoral": "Petróleo y coral",
   "themePlumPeach": "Ciruela y melocotón",
-  "themeDefault": "Predeterminado"
+  "themeDefault": "Predeterminado",
+  "accessBannerNotifications": "Las alarmas no sonarán con la app cerrada",
+  "accessBannerExact": "Las alarmas pueden sonar con retraso",
+  "accessBannerEnable": "Activar"
 }

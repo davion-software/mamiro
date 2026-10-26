@@ -1171,6 +1171,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Default'**
   String get themeDefault;
+
+  /// No description provided for @accessBannerNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms won\'t ring while the app is closed'**
+  String get accessBannerNotifications;
+
+  /// No description provided for @accessBannerExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms may ring late'**
+  String get accessBannerExact;
+
+  /// No description provided for @accessBannerEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get accessBannerEnable;
 }
 
 class _AppLocalizationsDelegate
