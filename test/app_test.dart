@@ -378,6 +378,10 @@ void main() {
           ),
           findsOneWidget,
         );
+        await tester.tap(find.widgetWithText(SnackBarAction, 'Undo'));
+        await pumpAppFrames(tester);
+        expect(find.text('Taken at $expected'), findsNothing);
+        expect(find.text('0/5'), findsOneWidget);
       }
     });
   }

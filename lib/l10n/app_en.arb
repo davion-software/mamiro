@@ -348,6 +348,30 @@
   "themeTealCoral": "Teal & coral",
   "themePlumPeach": "Plum & peach",
   "themeDefault": "Default",
+  "undoTaken": "Taken: {name}",
+  "@undoTaken": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undoSkipped": "Skipped: {name}",
+  "@undoSkipped": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "undoRecorded": "{count, plural, =1{1 dose recorded} other{{count} doses recorded}}",
+  "@undoRecorded": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "lateTakeTitleOne": "When did you take {name}?",
   "@lateTakeTitleOne": {
     "placeholders": {

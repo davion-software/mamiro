@@ -6,9 +6,10 @@ import 'package:mamiro/l10n/l10n.dart';
 /// When the user says the doses were taken. A null [at] means now.
 @immutable
 final class TakenAt {
-  const TakenAt(this.at);
+  const TakenAt(this.at, {this.adjusted = false});
 
   final DateTime? at;
+  final bool adjusted;
 }
 
 enum _LateChoice { now, onTime, other }
@@ -97,12 +98,5 @@ Future<TakenAt?> _pickTime(
     picked.minute,
   );
   final at = clampTakenAt(chosen, scheduledAt: scheduledAt, now: now);
-  if (at != chosen) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-      SnackBar(
-        content: Text(context.l10n.lateTakeAdjusted(context.formats.clock(at))),
-      ),
-    );
-  }
-  return TakenAt(at);
+  return TakenAt(at, adjusted: at != chosen);
 }

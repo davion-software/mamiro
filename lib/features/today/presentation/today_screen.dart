@@ -65,9 +65,17 @@ final class _TodayContent extends StatelessWidget {
             );
             if (answer == null || !context.mounted) return;
             if (slotIds.length == 1) {
-              notifier.take(slotIds.single, takenAt: answer.at);
+              notifier.take(
+                slotIds.single,
+                takenAt: answer.at,
+                timeAdjusted: answer.adjusted,
+              );
             } else {
-              notifier.takeAll(slotIds, takenAt: answer.at);
+              notifier.takeAll(
+                slotIds,
+                takenAt: answer.at,
+                timeAdjusted: answer.adjusted,
+              );
             }
           })
           .catchError(unexpectedLogger('mamiro.today', 'today.take')),

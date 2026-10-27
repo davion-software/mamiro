@@ -7,6 +7,7 @@ import 'package:mamiro/core/result.dart';
 import 'package:mamiro/data/providers.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_overlay.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/features/undo/undo_snack_bar_host.dart';
 import 'package:mamiro/features/onboarding/presentation/permission_primer.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/app_router.dart';
@@ -107,7 +108,11 @@ final class _MamiroAppState extends ConsumerState<MamiroApp>
       builder: (context, child) {
         return SkyBackground(
           child: Stack(
-            children: [child ?? const SizedBox.shrink(), const AlarmOverlay()],
+            children: [
+              child ?? const SizedBox.shrink(),
+              const AlarmOverlay(),
+              const UndoSnackBarHost(),
+            ],
           ),
         );
       },

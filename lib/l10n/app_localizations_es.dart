@@ -622,6 +622,27 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeDefault => 'Predeterminado';
 
   @override
+  String undoTaken(String name) {
+    return 'Tomada: $name';
+  }
+
+  @override
+  String undoSkipped(String name) {
+    return 'Omitida: $name';
+  }
+
+  @override
+  String undoRecorded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count tomas registradas',
+      one: '1 toma registrada',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String lateTakeTitleOne(String name) {
     return '¿Cuándo tomaste $name?';
   }
