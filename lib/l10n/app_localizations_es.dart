@@ -622,6 +622,26 @@ class AppLocalizationsEs extends AppLocalizations {
   String get themeDefault => 'Predeterminado';
 
   @override
+  String get primerTitle => 'Para que Mamiro suene a tiempo';
+
+  @override
+  String get primerClosedApp =>
+      'Las alarmas suenan a la hora de cada toma, aunque la app esté cerrada.';
+
+  @override
+  String get primerActions =>
+      'Puedes tomar, posponer u omitir desde la propia notificación.';
+
+  @override
+  String get primerLater => 'Puedes cambiarlo cuando quieras en Ajustes.';
+
+  @override
+  String get primerAllow => 'Permitir alarmas';
+
+  @override
+  String get primerNotNow => 'Ahora no';
+
+  @override
   String earlyTakeTitle(int count, String name) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

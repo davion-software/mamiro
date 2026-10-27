@@ -11,6 +11,7 @@ final class FakeAlarmGateway implements AlarmGateway {
   final applied = <(AlarmPlan, AppSettings)>[];
   int dismissals = 0;
   int notificationRequests = 0;
+  int exactTimingRequests = 0;
 
   @override
   Future<void> apply(AlarmPlan plan, AppSettings settings) async {
@@ -30,7 +31,7 @@ final class FakeAlarmGateway implements AlarmGateway {
   Future<void> openNotificationSettings() async {}
 
   @override
-  Future<void> requestExactTiming() async {}
+  Future<void> requestExactTiming() async => exactTimingRequests += 1;
 
   @override
   Future<void> requestFullScreen() async {}

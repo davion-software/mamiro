@@ -7,6 +7,7 @@ import 'package:mamiro/core/result.dart';
 import 'package:mamiro/data/providers.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_overlay.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_notifier.dart';
+import 'package:mamiro/features/onboarding/presentation/permission_primer.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/app_router.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
@@ -42,8 +43,8 @@ final class _MamiroAppState extends ConsumerState<MamiroApp>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       unawaited(
-        _requestNotifications().catchError(
-          unexpectedLogger('mamiro.alarms', 'alarms.request'),
+        _explainPermissions().catchError(
+          unexpectedLogger('mamiro.alarms', 'alarms.primer'),
         ),
       );
     });
@@ -66,8 +67,29 @@ final class _MamiroAppState extends ConsumerState<MamiroApp>
     );
   }
 
-  Future<void> _requestNotifications() async {
-    await ref.read(alarmGatewayProvider).requestNotifications();
+  /// Explains why Mamiro needs alarm access before the system dialog, once,
+  /// and only if access is missing. Settings handles any later change.
+  Future<void> _explainPermissions() async {
+    final needed = await ref.read(permissionPrimerNeededProvider.future);
+    if (!needed || !mounted) return;
+    final navigatorContext = ref
+        .read(routerProvider)
+        .routerDelegate
+        .navigatorKey
+        .currentContext;
+    if (navigatorContext == null || !navigatorContext.mounted) return;
+    final repository = ref.read(mamiroRepositoryProvider);
+    final marked = await repository.markPermissionPrimerShown();
+    if (marked case Err(:final failure)) {
+      logFailure('mamiro.alarms', failure);
+    }
+    if (!navigatorContext.mounted) return;
+    final allow = await showPermissionPrimer(navigatorContext);
+    if (!allow || !mounted) return;
+    final gateway = ref.read(alarmGatewayProvider);
+    await gateway.requestNotifications();
+    final access = await gateway.access();
+    if (access.exactTiming == false) await gateway.requestExactTiming();
     if (!mounted) return;
     ref.invalidate(alarmAccessProvider);
   }
