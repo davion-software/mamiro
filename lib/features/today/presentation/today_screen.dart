@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mamiro/theme/mamiro_colors.dart';
+import 'package:mamiro/core/app_log.dart';
+import 'package:mamiro/features/today/presentation/early_take.dart';
 import 'package:mamiro/features/today/presentation/today_notifier.dart';
 import 'package:mamiro/features/today/presentation/widgets/alarm_access_banner.dart';
 import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
@@ -43,6 +47,26 @@ final class _TodayContent extends StatelessWidget {
 
   final TodayState state;
   final TodayNotifier notifier;
+
+  /// Takes the doses, asking first if any is well ahead of its time.
+  void _take(BuildContext context, List<String> slotIds) {
+    final slots = [
+      for (final slot in state.allSlots)
+        if (slotIds.contains(slot.id)) slot,
+    ];
+    unawaited(
+      confirmEarlyTake(context, slots: slots, now: state.now)
+          .then((confirmed) {
+            if (!confirmed) return;
+            if (slotIds.length == 1) {
+              notifier.take(slotIds.single);
+            } else {
+              notifier.takeAll(slotIds);
+            }
+          })
+          .catchError(unexpectedLogger('mamiro.today', 'today.take')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,8 +113,8 @@ final class _TodayContent extends StatelessWidget {
                 DoseSection(
                   label: l10n.sectionDueNow,
                   groups: state.due,
-                  onTake: notifier.take,
-                  onTakeAll: notifier.takeAll,
+                  onTake: (id) => _take(context, [id]),
+                  onTakeAll: (ids) => _take(context, ids),
                   onSkip: notifier.skip,
                 ),
               if (next != null)
@@ -98,8 +122,8 @@ final class _TodayContent extends StatelessWidget {
                   label: l10n.sectionNext,
                   groups: [next],
                   timeInLabel: true,
-                  onTake: notifier.take,
-                  onTakeAll: notifier.takeAll,
+                  onTake: (id) => _take(context, [id]),
+                  onTakeAll: (ids) => _take(context, ids),
                   onSkip: notifier.skip,
                 ),
               if (state.later.isNotEmpty)
@@ -107,8 +131,8 @@ final class _TodayContent extends StatelessWidget {
                   label: l10n.sectionLater,
                   groups: state.later,
                   prominent: false,
-                  onTake: notifier.take,
-                  onTakeAll: notifier.takeAll,
+                  onTake: (id) => _take(context, [id]),
+                  onTakeAll: (ids) => _take(context, ids),
                   onSkip: notifier.skip,
                 ),
               SliverList.list(

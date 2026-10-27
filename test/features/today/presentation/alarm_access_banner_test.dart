@@ -37,6 +37,10 @@ Future<void> _pumpToday(
     await repository.initialize(now: DateTime(2026, 8, 20)),
     isA<Ok<void, StorageFailure>>(),
   );
+  expect(
+    await repository.markPermissionPrimerShown(),
+    isA<Ok<void, StorageFailure>>(),
+  );
   if (emptyCabinet) {
     expect(await repository.clearAll(now), isA<Ok<void, StorageFailure>>());
   }

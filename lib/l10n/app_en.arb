@@ -350,5 +350,30 @@
   "themeDefault": "Default",
   "accessBannerNotifications": "Alarms won't ring while the app is closed",
   "accessBannerExact": "Alarms may ring late",
-  "accessBannerEnable": "Turn on"
+  "accessBannerEnable": "Turn on",
+  "primerTitle": "So Mamiro rings on time",
+  "primerClosedApp": "Alarms ring at dose time, even when the app is closed.",
+  "primerActions": "Take, snooze, or skip right from the notification.",
+  "primerLater": "You can change this anytime in Settings.",
+  "primerAllow": "Allow alarms",
+  "primerNotNow": "Not now",
+  "earlyTakeTitle": "{count, plural, =1{Take {name} now?} other{Take {count} doses now?}}",
+  "earlyTakeBody": "It's scheduled for {time}.",
+  "@earlyTakeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@earlyTakeBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }

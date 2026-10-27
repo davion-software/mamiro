@@ -181,5 +181,13 @@
   "themeDefault": "Predeterminado",
   "accessBannerNotifications": "Las alarmas no sonarán con la app cerrada",
   "accessBannerExact": "Las alarmas pueden sonar con retraso",
-  "accessBannerEnable": "Activar"
+  "accessBannerEnable": "Activar",
+  "primerTitle": "Para que Mamiro suene a tiempo",
+  "primerClosedApp": "Las alarmas suenan a la hora de cada toma, aunque la app esté cerrada.",
+  "primerActions": "Puedes tomar, posponer u omitir desde la propia notificación.",
+  "primerLater": "Puedes cambiarlo cuando quieras en Ajustes.",
+  "primerAllow": "Permitir alarmas",
+  "primerNotNow": "Ahora no",
+  "earlyTakeTitle": "{count, plural, =1{¿Tomar {name} ahora?} other{¿Tomar {count} tomas ahora?}}",
+  "earlyTakeBody": "Está programada a las {time}."
 }
