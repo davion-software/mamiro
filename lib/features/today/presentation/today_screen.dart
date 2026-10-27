@@ -7,6 +7,7 @@ import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/features/today/presentation/early_take.dart';
 import 'package:mamiro/features/today/presentation/today_notifier.dart';
+import 'package:mamiro/features/today/presentation/widgets/alarm_access_banner.dart';
 import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
 import 'package:mamiro/features/today/presentation/widgets/done_list.dart';
 import 'package:mamiro/features/today/presentation/widgets/dose_section.dart';
@@ -80,6 +81,7 @@ final class _TodayContent extends StatelessWidget {
               SliverList.list(
                 children: [
                   _TodayHeader(state: state),
+                  if (state.hasMedications) const AlarmAccessBanner(),
                   if (state.failure case final failure?) ...[
                     const SizedBox(height: 16),
                     StorageBanner(failure: failure),

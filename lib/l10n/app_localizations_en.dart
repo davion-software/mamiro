@@ -616,6 +616,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDefault => 'Default';
 
   @override
+  String get accessBannerNotifications =>
+      'Alarms won\'t ring while the app is closed';
+
+  @override
+  String get accessBannerExact => 'Alarms may ring late';
+
+  @override
+  String get accessBannerEnable => 'Turn on';
+
+  @override
   String get primerTitle => 'So Mamiro rings on time';
 
   @override
