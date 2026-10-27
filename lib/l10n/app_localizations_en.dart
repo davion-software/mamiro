@@ -634,4 +634,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get primerNotNow => 'Not now';
+
+  @override
+  String earlyTakeTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Take $count doses now?',
+      one: 'Take $name now?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String earlyTakeBody(String time) {
+    return 'It\'s scheduled for $time.';
+  }
 }

@@ -184,5 +184,7 @@
   "primerActions": "Puedes tomar, posponer u omitir desde la propia notificación.",
   "primerLater": "Puedes cambiarlo cuando quieras en Ajustes.",
   "primerAllow": "Permitir alarmas",
-  "primerNotNow": "Ahora no"
+  "primerNotNow": "Ahora no",
+  "earlyTakeTitle": "{count, plural, =1{¿Tomar {name} ahora?} other{¿Tomar {count} tomas ahora?}}",
+  "earlyTakeBody": "Está programada a las {time}."
 }

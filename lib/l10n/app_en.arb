@@ -353,5 +353,24 @@
   "primerActions": "Take, snooze, or skip right from the notification.",
   "primerLater": "You can change this anytime in Settings.",
   "primerAllow": "Allow alarms",
-  "primerNotNow": "Not now"
+  "primerNotNow": "Not now",
+  "earlyTakeTitle": "{count, plural, =1{Take {name} now?} other{Take {count} doses now?}}",
+  "earlyTakeBody": "It's scheduled for {time}.",
+  "@earlyTakeTitle": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "@earlyTakeBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  }
 }
