@@ -5,6 +5,26 @@ import 'package:mamiro/core/dose_slot.dart';
 import 'package:mamiro/core/medication.dart';
 
 const missAfter = Duration(hours: 2);
+
+/// Taking a dose later than this asks when it was really taken, so the log
+/// keeps the true time instead of the moment of the tap.
+const lateTakeThreshold = Duration(minutes: 30);
+
+bool isLateTake({required DateTime scheduledAt, required DateTime now}) {
+  return now.difference(scheduledAt) > lateTakeThreshold;
+}
+
+/// Keeps a reported take time between the scheduled time and now.
+DateTime clampTakenAt(
+  DateTime chosen, {
+  required DateTime scheduledAt,
+  required DateTime now,
+}) {
+  if (chosen.isBefore(scheduledAt)) return scheduledAt;
+  if (chosen.isAfter(now)) return now;
+  return chosen;
+}
+
 const doseEventLookback = Duration(days: 400);
 
 DateTime dateOnly(DateTime day) => DateTime(day.year, day.month, day.day);

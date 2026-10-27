@@ -348,6 +348,47 @@
   "themeTealCoral": "Teal & coral",
   "themePlumPeach": "Plum & peach",
   "themeDefault": "Default",
+  "lateTakeTitleOne": "When did you take {name}?",
+  "@lateTakeTitleOne": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "lateTakeTitleMany": "When did you take these {count} doses?",
+  "@lateTakeTitleMany": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "lateTakeNow": "Now ({time})",
+  "@lateTakeNow": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lateTakeOnTime": "On time ({time})",
+  "@lateTakeOnTime": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lateTakeOther": "Another time…",
+  "lateTakeAdjusted": "Set to {time}: it must be between the scheduled time and now.",
+  "@lateTakeAdjusted": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
   "accessBannerNotifications": "Alarms won't ring while the app is closed",
   "accessBannerExact": "Alarms may ring late",
   "accessBannerEnable": "Turn on",

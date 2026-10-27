@@ -11,6 +11,7 @@ import 'package:mamiro/features/today/presentation/widgets/alarm_access_banner.d
 import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
 import 'package:mamiro/features/today/presentation/widgets/done_list.dart';
 import 'package:mamiro/features/today/presentation/widgets/dose_section.dart';
+import 'package:mamiro/features/today/presentation/widgets/late_take_dialog.dart';
 import 'package:mamiro/features/today/presentation/widgets/refill_card.dart';
 import 'package:mamiro/features/today/presentation/widgets/taken_ring.dart';
 import 'package:mamiro/l10n/l10n.dart';
@@ -48,7 +49,6 @@ final class _TodayContent extends StatelessWidget {
   final TodayState state;
   final TodayNotifier notifier;
 
-  /// Takes the doses, asking first if any is well ahead of its time.
   void _take(BuildContext context, List<String> slotIds) {
     final slots = [
       for (final slot in state.allSlots)
@@ -56,12 +56,18 @@ final class _TodayContent extends StatelessWidget {
     ];
     unawaited(
       confirmEarlyTake(context, slots: slots, now: state.now)
-          .then((confirmed) {
-            if (!confirmed) return;
+          .then((confirmed) async {
+            if (!confirmed || !context.mounted) return;
+            final answer = await askTakenAt(
+              context,
+              slots: slots,
+              now: state.now,
+            );
+            if (answer == null || !context.mounted) return;
             if (slotIds.length == 1) {
-              notifier.take(slotIds.single);
+              notifier.take(slotIds.single, takenAt: answer.at);
             } else {
-              notifier.takeAll(slotIds);
+              notifier.takeAll(slotIds, takenAt: answer.at);
             }
           })
           .catchError(unexpectedLogger('mamiro.today', 'today.take')),

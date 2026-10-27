@@ -175,11 +175,13 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     });
   }
 
-  void take(String slotId) {
+  /// Logs the dose as taken at [takenAt], or now when it is null.
+  void take(String slotId, {DateTime? takenAt}) {
     unawaited(
       _record(
         slotId,
         DoseAction.taken,
+        at: takenAt,
       ).catchError(unexpectedLogger('mamiro.today', 'today.intent')),
     );
   }
@@ -193,11 +195,12 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     );
   }
 
-  void takeAll(List<String> slotIds) {
+  void takeAll(List<String> slotIds, {DateTime? takenAt}) {
     unawaited(
       _recordAll(
         slotIds,
         DoseAction.taken,
+        at: takenAt,
       ).catchError(unexpectedLogger('mamiro.today', 'today.intent')),
     );
   }
@@ -222,9 +225,13 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     );
   }
 
-  Future<void> _recordAll(List<String> slotIds, DoseAction action) async {
+  Future<void> _recordAll(
+    List<String> slotIds,
+    DoseAction action, {
+    DateTime? at,
+  }) async {
     for (final slotId in slotIds) {
-      await _record(slotId, action);
+      await _record(slotId, action, at: at);
       if (!ref.mounted) return;
     }
   }
@@ -256,7 +263,7 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
     }
   }
 
-  Future<void> _record(String slotId, DoseAction action) async {
+  Future<void> _record(String slotId, DoseAction action, {DateTime? at}) async {
     final current = state.value;
     if (current == null) return;
     final slot = current.allSlots
@@ -268,7 +275,7 @@ final class TodayNotifier extends Notifier<AsyncValue<TodayState>> {
         .recordSlot(
           slot: slot,
           action: action,
-          now: ref.read(clockProvider).now(),
+          now: at ?? ref.read(clockProvider).now(),
           eventId: ref.read(idGeneratorProvider)(),
         );
     if (!ref.mounted) return;
