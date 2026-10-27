@@ -7,10 +7,12 @@ final class FakeAlarmGateway implements AlarmGateway {
     this.grantedAccess = const AlarmAccess(notifications: true),
   });
 
-  final AlarmAccess grantedAccess;
+  AlarmAccess grantedAccess;
   final applied = <(AlarmPlan, AppSettings)>[];
   int dismissals = 0;
   int notificationRequests = 0;
+  int settingsOpened = 0;
+  int exactTimingRequests = 0;
 
   @override
   Future<void> apply(AlarmPlan plan, AppSettings settings) async {
@@ -27,10 +29,10 @@ final class FakeAlarmGateway implements AlarmGateway {
   Future<void> requestNotifications() async => notificationRequests += 1;
 
   @override
-  Future<void> openNotificationSettings() async {}
+  Future<void> openNotificationSettings() async => settingsOpened += 1;
 
   @override
-  Future<void> requestExactTiming() async {}
+  Future<void> requestExactTiming() async => exactTimingRequests += 1;
 
   @override
   Future<void> requestFullScreen() async {}

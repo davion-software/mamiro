@@ -97,9 +97,12 @@ void main() {
     // At 19:30 the 8:00 doses are missed; take the first of them.
     await tester.tap(find.widgetWithText(FilledButton, 'Take').first);
     await frames(tester);
+    await tester.tap(find.text('Now (7:30\u202fPM)'));
+    await frames(tester);
     expect(find.text('Taken: Lisinopril'), findsOneWidget);
     final taken = await read(tester, repository);
     expect(taken.events, hasLength(1));
+    expect(taken.events.single.at, DateTime(2026, 8, 26, 19, 30));
     expect(quantityOf(taken, 'demo-lisinopril'), before! - 1);
 
     await tester.tap(undoAction());
@@ -111,6 +114,34 @@ void main() {
       find.widgetWithText(FilledButton, 'Take'),
       findsNWidgets(pendingCount),
     );
+  });
+
+  testWidgets('an early take can be confirmed and undone', (tester) async {
+    final repository = await pumpAt(tester, DateTime(2026, 8, 26, 7));
+    final before = quantityOf(
+      await read(tester, repository),
+      'demo-lisinopril',
+    );
+
+    await tester.tap(find.byTooltip('More actions').at(3));
+    await frames(tester);
+    await tester.tap(find.text('Take now'));
+    await frames(tester);
+    expect(find.text('Take Lisinopril now?'), findsOneWidget);
+    expect((await read(tester, repository)).events, isEmpty);
+
+    await tester.tap(find.widgetWithText(TextButton, 'Take now'));
+    await frames(tester);
+    final taken = await read(tester, repository);
+    expect(taken.events, hasLength(1));
+    expect(taken.events.single.scheduledAt, DateTime(2026, 8, 26, 20));
+    expect(quantityOf(taken, 'demo-lisinopril'), before! - 1);
+
+    await tester.tap(undoAction());
+    await frames(tester);
+    final after = await read(tester, repository);
+    expect(after.events, isEmpty);
+    expect(quantityOf(after, 'demo-lisinopril'), before);
   });
 
   testWidgets('Skip on the alarm offers Undo above the alarm', (tester) async {
@@ -141,6 +172,10 @@ void main() {
 
         await tester.tap(find.text('Tomar todas (3)').last);
         await frames(tester);
+        if (!alarm) {
+          await tester.tap(find.text('Ahora (19:30)'));
+          await frames(tester);
+        }
         expect(find.text('3 tomas registradas'), findsWidgets);
         final taken = await read(tester, repository);
         expect(taken.events, hasLength(3));
@@ -223,6 +258,11 @@ void main() {
         );
         await frames(tester);
 
+        if (!alarm) {
+          await tester.tap(find.text('Now (7:30\u202fPM)'));
+          await frames(tester);
+        }
+
         expect(find.text('That change could not be saved.'), findsOneWidget);
         expect(find.byType(SnackBarAction), findsNothing);
         expect((await read(tester, repository)).events, isEmpty);
@@ -240,6 +280,8 @@ void main() {
       'demo-lisinopril',
     );
     await tester.tap(find.widgetWithText(FilledButton, 'Take').first);
+    await frames(tester);
+    await tester.tap(find.text('Now (7:30\u202fPM)'));
     await frames(tester);
     final event = (await read(tester, repository)).events.single;
     expect(
@@ -263,6 +305,8 @@ void main() {
   testWidgets('Undo expires after five seconds', (tester) async {
     final repository = await pumpAt(tester, DateTime(2026, 8, 26, 19, 30));
     await tester.tap(find.widgetWithText(FilledButton, 'Take').first);
+    await frames(tester);
+    await tester.tap(find.text('Now (7:30\u202fPM)'));
     await frames(tester);
     expect(find.text('Taken: Lisinopril'), findsOneWidget);
 

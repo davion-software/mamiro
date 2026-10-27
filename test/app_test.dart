@@ -8,6 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mamiro/app.dart';
+import 'package:mamiro/core/dose_slot.dart';
+import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/features/today/presentation/widgets/late_take_dialog.dart';
+import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/core/theme_choice.dart';
 import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/features/alarm/presentation/alarm_overlay.dart';
@@ -35,6 +39,7 @@ Future<void> pumpMamiro(
   FakeAlarmGateway? alarmGateway,
   Locale? locale,
   DateTime? startedOn,
+  AppDatabase? database,
 }) async {
   if (locale != null) {
     tester.platformDispatcher.localesTestValue = [locale];
@@ -46,9 +51,12 @@ Future<void> pumpMamiro(
   addTearDown(tester.view.reset);
   SharedPreferences.setMockInitialValues({});
   final now = at ?? DateTime(2026, 8, 26, 7);
-  final database = AppDatabase(NativeDatabase.memory());
-  addTearDown(database.close);
-  final repository = MamiroRepository(database);
+  // Unique ids: several writes in one test must not collide.
+  var nextId = 0;
+  // Passing a database simulates a restart: same storage, new app.
+  final db = database ?? AppDatabase(NativeDatabase.memory());
+  if (database == null) addTearDown(db.close);
+  final repository = MamiroRepository(db);
   expect(
     await repository.initialize(now: startedOn ?? DateTime(2026, 8, 20)),
     isA<Ok<void, StorageFailure>>(),
@@ -56,10 +64,10 @@ Future<void> pumpMamiro(
   await tester.pumpWidget(
     ProviderScope(
       overrides: [
-        appDatabaseProvider.overrideWithValue(database),
+        appDatabaseProvider.overrideWithValue(db),
         mamiroRepositoryProvider.overrideWithValue(repository),
         clockProvider.overrideWithValue(Clock.fixed(now)),
-        idGeneratorProvider.overrideWithValue(() => 'widget-medication'),
+        idGeneratorProvider.overrideWithValue(() => 'widget-${nextId++}'),
         alarmGatewayProvider.overrideWithValue(
           alarmGateway ?? FakeAlarmGateway(),
         ),
@@ -131,7 +139,9 @@ void main() {
     final gateway = FakeAlarmGateway();
     await pumpMamiro(tester, alarmGateway: gateway);
 
-    expect(gateway.notificationRequests, 1);
+    // Access is already granted, so no explanation and no system dialog.
+    expect(gateway.notificationRequests, 0);
+    expect(find.text('So Mamiro rings on time'), findsNothing);
     final (plan, _) = gateway.applied.last;
     expect(plan.upcoming.first.fireAt, DateTime(2026, 8, 26, 8));
     expect(plan.upcoming.first.slotKey, startsWith('demo-'));
@@ -267,5 +277,251 @@ void main() {
     final context = tester.element(find.text('Teal & coral'));
     expect(context.colors, MamiroColors.of(ThemeChoice.tealCoral));
     expect(find.text('Default'), findsOneWidget);
+  });
+
+  testWidgets('a late take asks when it was really taken', (tester) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 10, 30));
+
+    await tester.tap(find.text('Take').first);
+    await pumpAppFrames(tester);
+    expect(find.text('When did you take Lisinopril?'), findsOneWidget);
+    expect(find.text('Now (10:30\u202fAM)'), findsOneWidget);
+
+    await tester.tap(find.text('On time (8:00\u202fAM)'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('When did you take Lisinopril?'), findsNothing);
+    expect(find.text('Taken at 8:00\u202fAM'), findsOneWidget);
+  });
+
+  testWidgets('cancelling the late-take question records nothing', (
+    tester,
+  ) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 10, 30));
+
+    await tester.tap(find.text('Take all (3)'));
+    await pumpAppFrames(tester);
+    expect(find.text('When did you take these 3 doses?'), findsOneWidget);
+
+    await tester.tap(find.text('Cancel'));
+    await pumpAppFrames(tester);
+    expect(find.text('Take all (3)'), findsOneWidget);
+    expect(find.textContaining('Taken at'), findsNothing);
+  });
+
+  testWidgets('a late group uses one answer for every dose', (tester) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 10, 30));
+
+    await tester.tap(find.text('Take all (3)'));
+    await pumpAppFrames(tester);
+    expect(find.text('When did you take these 3 doses?'), findsOneWidget);
+
+    await tester.tap(find.text('On time (8:00\u202fAM)'));
+    await pumpAppFrames(tester);
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('Taken at 8:00\u202fAM'), findsNWidgets(3));
+    expect(find.text('3/5'), findsOneWidget);
+  });
+
+  testWidgets('a late take can be recorded now', (tester) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 10, 30));
+
+    await tester.tap(find.text('Take').first);
+    await pumpAppFrames(tester);
+    await tester.tap(find.text('Now (10:30\u202fAM)'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('Taken at 10:30\u202fAM'), findsOneWidget);
+  });
+
+  testWidgets('the late-take question uses Spanish times', (tester) async {
+    await pumpMamiro(
+      tester,
+      at: DateTime(2026, 8, 26, 10, 30),
+      locale: const Locale('es', 'ES'),
+    );
+
+    await tester.tap(find.text('Tomar').first);
+    await pumpAppFrames(tester);
+    expect(find.text('¿Cuándo tomaste Lisinopril?'), findsOneWidget);
+    expect(find.text('Ahora (10:30)'), findsOneWidget);
+
+    await tester.tap(find.text('A su hora (8:00)'));
+    await pumpAppFrames(tester);
+    expect(find.text('Tomada a las 8:00'), findsOneWidget);
+  });
+
+  for (final (hour, minute, expected, adjusted) in [
+    ('9', '15', '9:15\u202fAM', false),
+    ('7', '00', '8:00\u202fAM', true),
+    ('11', '00', '10:30\u202fAM', true),
+  ]) {
+    testWidgets('another time $hour:$minute records $expected', (tester) async {
+      await pumpMamiro(tester, at: DateTime(2026, 8, 26, 10, 30));
+      await tester.tap(find.text('Take').first);
+      await pumpAppFrames(tester);
+      await tester.tap(find.text('Another time…'));
+      await pumpAppFrames(tester);
+      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      await pumpAppFrames(tester);
+      await tester.enterText(find.byType(TextFormField).at(0), hour);
+      await tester.enterText(find.byType(TextFormField).at(1), minute);
+      await tester.tap(find.text('OK'));
+      await pumpAppFrames(tester);
+
+      expect(find.text('Taken at $expected'), findsOneWidget);
+      if (adjusted) {
+        expect(
+          find.text(
+            'Set to $expected: it must be between the scheduled time and now.',
+          ),
+          findsOneWidget,
+        );
+        await tester.tap(find.widgetWithText(SnackBarAction, 'Undo'));
+        await pumpAppFrames(tester);
+        expect(find.text('Taken at $expected'), findsNothing);
+        expect(find.text('0/5'), findsOneWidget);
+      }
+    });
+  }
+
+  testWidgets('doses within the threshold are taken without asking', (
+    tester,
+  ) async {
+    late BuildContext context;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Builder(
+          builder: (built) {
+            context = built;
+            return const SizedBox.shrink();
+          },
+        ),
+      ),
+    );
+    final slot = DoseSlot(
+      medication: const Medication.sample(),
+      scheduledAt: DateTime(2026, 8, 26, 8),
+      status: SlotStatus.due,
+    );
+
+    final answer = await askTakenAt(
+      context,
+      slots: [slot],
+      now: DateTime(2026, 8, 26, 8, 20),
+    );
+    await tester.pump();
+
+    expect(answer?.at, isNull);
+    expect(answer, isNotNull);
+    expect(find.byType(AlertDialog), findsNothing);
+  });
+
+  group('alarm permission explanation', () {
+    const denied = AlarmAccess(notifications: false, exactTiming: false);
+
+    testWidgets('appears first and Allow asks the system', (tester) async {
+      final gateway = FakeAlarmGateway(grantedAccess: denied);
+      await pumpMamiro(tester, alarmGateway: gateway);
+
+      expect(find.text('So Mamiro rings on time'), findsOneWidget);
+      expect(gateway.notificationRequests, 0);
+
+      await tester.tap(find.text('Allow alarms'));
+      await pumpAppFrames(tester);
+
+      expect(find.text('So Mamiro rings on time'), findsNothing);
+      expect(gateway.notificationRequests, 1);
+      expect(gateway.exactTimingRequests, 1);
+    });
+
+    testWidgets('Not now asks nothing and does not return', (tester) async {
+      final database = AppDatabase(NativeDatabase.memory());
+      addTearDown(database.close);
+      final gateway = FakeAlarmGateway(grantedAccess: denied);
+      await pumpMamiro(tester, alarmGateway: gateway, database: database);
+
+      await tester.tap(find.text('Not now'));
+      await pumpAppFrames(tester);
+      expect(find.text('So Mamiro rings on time'), findsNothing);
+      expect(gateway.notificationRequests, 0);
+
+      // Restart on the same storage.
+      await tester.pumpWidget(const SizedBox.shrink());
+      final restarted = FakeAlarmGateway(grantedAccess: denied);
+      await pumpMamiro(tester, alarmGateway: restarted, database: database);
+
+      expect(find.text('So Mamiro rings on time'), findsNothing);
+      expect(restarted.notificationRequests, 0);
+    });
+
+    testWidgets('stays hidden when alarms are already allowed', (tester) async {
+      final gateway = FakeAlarmGateway(
+        grantedAccess: const AlarmAccess(
+          notifications: true,
+          exactTiming: false,
+        ),
+      );
+      await pumpMamiro(tester, alarmGateway: gateway);
+
+      expect(find.text('So Mamiro rings on time'), findsNothing);
+      expect(gateway.notificationRequests, 0);
+      expect(gateway.exactTimingRequests, 0);
+    });
+
+    testWidgets('reads in Spanish', (tester) async {
+      await pumpMamiro(
+        tester,
+        alarmGateway: FakeAlarmGateway(grantedAccess: denied),
+        locale: const Locale('es', 'ES'),
+      );
+
+      expect(find.text('Para que Mamiro suene a tiempo'), findsOneWidget);
+      expect(find.text('Permitir alarmas'), findsOneWidget);
+      expect(find.text('Ahora no'), findsOneWidget);
+    });
+  });
+
+  testWidgets('taking the 20:00 dose at 7:00 asks first', (tester) async {
+    await pumpMamiro(tester);
+    expect(find.text('0/5'), findsOneWidget);
+
+    // The fourth dose on screen is Lisinopril at 20:00, under Later today.
+    await tester.tap(find.byTooltip('More actions').at(3));
+    await pumpAppFrames(tester);
+    await tester.tap(find.text('Take now'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('Take Lisinopril now?'), findsOneWidget);
+    expect(find.text("It's scheduled for 8:00\u202fPM."), findsOneWidget);
+    await tester.tap(find.text('Cancel'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('Take Lisinopril now?'), findsNothing);
+    expect(find.text('0/5'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('More actions').at(3));
+    await pumpAppFrames(tester);
+    await tester.tap(find.text('Take now'));
+    await pumpAppFrames(tester);
+    await tester.tap(find.widgetWithText(TextButton, 'Take now'));
+    await pumpAppFrames(tester);
+
+    expect(find.text('1/5'), findsOneWidget);
+  });
+
+  testWidgets('taking all 8:00 doses at 7:30 needs no confirmation', (
+    tester,
+  ) async {
+    await pumpMamiro(tester, at: DateTime(2026, 8, 26, 7, 30));
+
+    await tester.tap(find.text('Take all (3)'));
+    await pumpAppFrames(tester);
+
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('3/5'), findsOneWidget);
   });
 }

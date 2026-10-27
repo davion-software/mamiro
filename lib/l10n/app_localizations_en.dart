@@ -635,4 +635,78 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String lateTakeTitleOne(String name) {
+    return 'When did you take $name?';
+  }
+
+  @override
+  String lateTakeTitleMany(int count) {
+    return 'When did you take these $count doses?';
+  }
+
+  @override
+  String lateTakeNow(String time) {
+    return 'Now ($time)';
+  }
+
+  @override
+  String lateTakeOnTime(String time) {
+    return 'On time ($time)';
+  }
+
+  @override
+  String get lateTakeOther => 'Another time…';
+
+  @override
+  String lateTakeAdjusted(String time) {
+    return 'Set to $time: it must be between the scheduled time and now.';
+  }
+
+  @override
+  String get accessBannerNotifications =>
+      'Alarms won\'t ring while the app is closed';
+
+  @override
+  String get accessBannerExact => 'Alarms may ring late';
+
+  @override
+  String get accessBannerEnable => 'Turn on';
+
+  @override
+  String get primerTitle => 'So Mamiro rings on time';
+
+  @override
+  String get primerClosedApp =>
+      'Alarms ring at dose time, even when the app is closed.';
+
+  @override
+  String get primerActions =>
+      'Take, snooze, or skip right from the notification.';
+
+  @override
+  String get primerLater => 'You can change this anytime in Settings.';
+
+  @override
+  String get primerAllow => 'Allow alarms';
+
+  @override
+  String get primerNotNow => 'Not now';
+
+  @override
+  String earlyTakeTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Take $count doses now?',
+      one: 'Take $name now?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String earlyTakeBody(String time) {
+    return 'It\'s scheduled for $time.';
+  }
 }

@@ -1189,6 +1189,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 dose recorded} other{{count} doses recorded}}'**
   String undoRecorded(int count);
+
+  /// No description provided for @lateTakeTitleOne.
+  ///
+  /// In en, this message translates to:
+  /// **'When did you take {name}?'**
+  String lateTakeTitleOne(String name);
+
+  /// No description provided for @lateTakeTitleMany.
+  ///
+  /// In en, this message translates to:
+  /// **'When did you take these {count} doses?'**
+  String lateTakeTitleMany(int count);
+
+  /// No description provided for @lateTakeNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now ({time})'**
+  String lateTakeNow(String time);
+
+  /// No description provided for @lateTakeOnTime.
+  ///
+  /// In en, this message translates to:
+  /// **'On time ({time})'**
+  String lateTakeOnTime(String time);
+
+  /// No description provided for @lateTakeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Another time…'**
+  String get lateTakeOther;
+
+  /// No description provided for @lateTakeAdjusted.
+  ///
+  /// In en, this message translates to:
+  /// **'Set to {time}: it must be between the scheduled time and now.'**
+  String lateTakeAdjusted(String time);
+
+  /// No description provided for @accessBannerNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms won\'t ring while the app is closed'**
+  String get accessBannerNotifications;
+
+  /// No description provided for @accessBannerExact.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms may ring late'**
+  String get accessBannerExact;
+
+  /// No description provided for @accessBannerEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on'**
+  String get accessBannerEnable;
+
+  /// No description provided for @primerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'So Mamiro rings on time'**
+  String get primerTitle;
+
+  /// No description provided for @primerClosedApp.
+  ///
+  /// In en, this message translates to:
+  /// **'Alarms ring at dose time, even when the app is closed.'**
+  String get primerClosedApp;
+
+  /// No description provided for @primerActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Take, snooze, or skip right from the notification.'**
+  String get primerActions;
+
+  /// No description provided for @primerLater.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this anytime in Settings.'**
+  String get primerLater;
+
+  /// No description provided for @primerAllow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow alarms'**
+  String get primerAllow;
+
+  /// No description provided for @primerNotNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Not now'**
+  String get primerNotNow;
+
+  /// No description provided for @earlyTakeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Take {name} now?} other{Take {count} doses now?}}'**
+  String earlyTakeTitle(int count, String name);
+
+  /// No description provided for @earlyTakeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It\'s scheduled for {time}.'**
+  String earlyTakeBody(String time);
 }
 
 class _AppLocalizationsDelegate

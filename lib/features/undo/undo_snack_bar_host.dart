@@ -33,7 +33,17 @@ final class UndoSnackBarHost extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            content: Text(message),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(message),
+                if (next.adjustedTakenAt case final adjustedAt?)
+                  Text(
+                    l10n.lateTakeAdjusted(context.formats.clock(adjustedAt)),
+                  ),
+              ],
+            ),
             duration: duration,
             persist: false,
             action: SnackBarAction(

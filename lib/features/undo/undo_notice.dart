@@ -12,10 +12,15 @@ import 'package:mamiro/services/app_providers.dart';
 /// Doses just taken or skipped, offered for a moment to be undone.
 @immutable
 final class RecordedDoses {
-  const RecordedDoses({required this.slots, required this.action});
+  const RecordedDoses({
+    required this.slots,
+    required this.action,
+    this.adjustedTakenAt,
+  });
 
   final List<DoseSlot> slots;
   final DoseAction action;
+  final DateTime? adjustedTakenAt;
 }
 
 /// The latest successful Take or Skip from Today or the in-app alarm.
@@ -24,9 +29,17 @@ final class UndoNoticeNotifier extends Notifier<RecordedDoses?> {
   @override
   RecordedDoses? build() => null;
 
-  void recorded(List<DoseSlot> slots, DoseAction action) {
+  void recorded(
+    List<DoseSlot> slots,
+    DoseAction action, {
+    DateTime? adjustedTakenAt,
+  }) {
     if (slots.isEmpty) return;
-    state = RecordedDoses(slots: List.unmodifiable(slots), action: action);
+    state = RecordedDoses(
+      slots: List.unmodifiable(slots),
+      action: action,
+      adjustedTakenAt: adjustedTakenAt,
+    );
   }
 
   /// Reverts exactly [doses]. A dose no longer taken or skipped is left
