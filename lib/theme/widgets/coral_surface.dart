@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 
-/// Flat coral for buttons and chips that carry white text (5:1).
-BoxDecoration coralSurface({BoxShape shape = BoxShape.rectangle}) {
+/// The solid accent for chips and buttons that mark "now". Text and icons
+/// on it use [MamiroColors.onAccent].
+BoxDecoration accentSurface(
+  MamiroColors colors, {
+  BoxShape shape = BoxShape.rectangle,
+}) {
   return BoxDecoration(
     shape: shape,
     borderRadius: shape == BoxShape.circle ? null : BorderRadius.circular(999),
-    color: MamiroPalette.coralButtonTop,
+    color: colors.accent,
   );
 }

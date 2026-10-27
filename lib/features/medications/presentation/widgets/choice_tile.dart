@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 
 final class ChoiceTile extends StatelessWidget {
   const ChoiceTile({
@@ -16,11 +16,13 @@ final class ChoiceTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? MamiroPalette.cobaltMist : MamiroPalette.surface,
+      color: selected
+          ? context.colors.primaryContainer
+          : context.colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: selected ? MamiroPalette.cobalt : MamiroPalette.outlineStrong,
+          color: selected ? context.colors.primary : context.colors.outline,
           width: selected ? 2 : 1,
         ),
       ),

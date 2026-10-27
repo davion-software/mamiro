@@ -1,6 +1,7 @@
 import 'package:mamiro/core/app_settings.dart';
 import 'package:mamiro/core/dose_event.dart';
 import 'package:mamiro/core/medication.dart';
+import 'package:mamiro/core/theme_choice.dart';
 import 'package:mamiro/data/app_database.dart';
 
 int utcMs(DateTime value) => value.toUtc().millisecondsSinceEpoch;
@@ -60,5 +61,6 @@ AppSettings settingsFromRow(SettingsRow row) {
     vibration: row.vibration,
     banners: row.banners,
     snoozeMinutes: row.snoozeMinutes,
+    theme: ThemeChoice.byName(row.theme),
   );
 }

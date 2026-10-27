@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/routing/routes.dart';
 import 'package:mamiro/theme/palette.dart';
@@ -73,11 +74,11 @@ final class _PillNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: MamiroPalette.surface,
+        color: context.colors.surface,
         borderRadius: BorderRadius.circular(999),
         boxShadow: [
           BoxShadow(
-            color: MamiroPalette.cobalt.withValues(alpha: 0.12),
+            color: context.colors.primary.withValues(alpha: 0.12),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -129,9 +130,9 @@ final class _NavItem extends StatelessWidget {
         message: label,
         child: DecoratedBox(
           decoration: selected
-              ? coralSurface()
+              ? accentSurface(context.colors)
               : BoxDecoration(
-                  color: MamiroPalette.surfaceMuted,
+                  color: context.colors.muted,
                   borderRadius: BorderRadius.circular(999),
                 ),
           child: Material(
@@ -153,17 +154,17 @@ final class _NavItem extends StatelessWidget {
                         icon,
                         size: 22,
                         color: selected
-                            ? MamiroPalette.surface
-                            : MamiroPalette.ink,
+                            ? context.colors.onAccent
+                            : context.colors.ink,
                       ),
                       if (selected) ...[
                         const SizedBox(width: 8),
                         Text(
                           label,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: MamiroPalette.fontFamily,
                             fontWeight: FontWeight.w700,
-                            color: MamiroPalette.surface,
+                            color: context.colors.onAccent,
                           ),
                         ),
                       ],

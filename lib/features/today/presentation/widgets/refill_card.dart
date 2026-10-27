@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/medication.dart';
 import 'package:mamiro/l10n/l10n.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/status_chip.dart';
 
 final class RefillCard extends StatelessWidget {
   const RefillCard({
@@ -29,19 +29,21 @@ final class RefillCard extends StatelessWidget {
           PillGlyph(shape: medication.shape, color: medication.color, size: 28),
           const SizedBox(width: 12),
           Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: medication.name),
-                  TextSpan(
-                    text: '  ·  ${l10n.pillsLeft(medication.quantity ?? 0)}',
-                    style: const TextStyle(color: MamiroPalette.coralDeep),
-                  ),
-                ],
-              ),
-              style: Theme.of(context).textTheme.titleMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(
+                  medication.name,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                StatusChip(
+                  label: l10n.pillsLeft(medication.quantity ?? 0),
+                  tone: StatusTone.warning,
+                  icon: Icons.inventory_2_outlined,
+                ),
+              ],
             ),
           ),
           TextButton(

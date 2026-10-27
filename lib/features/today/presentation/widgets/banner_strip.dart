@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mamiro/theme/palette.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/theme/widgets/coral_surface.dart';
 
 final class BannerStrip extends StatelessWidget {
@@ -10,13 +10,13 @@ final class BannerStrip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: coralSurface(),
+      decoration: accentSurface(context.colors),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
         child: Text(
           text,
           style: Theme.of(context).textTheme.titleMedium
-              ?.copyWith(color: MamiroPalette.surface),
+              ?.copyWith(color: context.colors.onAccent),
         ),
       ),
     );

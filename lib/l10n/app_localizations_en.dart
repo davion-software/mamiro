@@ -596,4 +596,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoBeforeBed => 'before bed';
+
+  @override
+  String get sectionTheme => 'Theme';
+
+  @override
+  String get themeNightApricot => 'Night blue & apricot';
+
+  @override
+  String get themeCobaltPeach => 'Cobalt & peach';
+
+  @override
+  String get themeTealCoral => 'Teal & coral';
+
+  @override
+  String get themePlumPeach => 'Plum & peach';
+
+  @override
+  String get themeDefault => 'Default';
+
+  @override
+  String earlyTakeTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Take $count doses now?',
+      one: 'Take $name now?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String earlyTakeBody(String time) {
+    return 'It\'s scheduled for $time.';
+  }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/l10n/l10n.dart';
 import 'package:mamiro/theme/palette.dart';
 
@@ -42,11 +43,11 @@ final class _DayChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? MamiroPalette.cobalt : MamiroPalette.surface,
+      color: selected ? context.colors.primary : context.colors.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: selected ? MamiroPalette.cobalt : MamiroPalette.outlineStrong,
+          color: selected ? context.colors.primary : context.colors.outline,
         ),
       ),
       child: InkWell(
@@ -61,7 +62,7 @@ final class _DayChip extends StatelessWidget {
                 fontFamily: MamiroPalette.fontFamily,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: selected ? MamiroPalette.surface : MamiroPalette.ink,
+                color: selected ? context.colors.surface : context.colors.ink,
               ),
             ),
           ),

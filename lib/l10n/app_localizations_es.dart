@@ -602,4 +602,38 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get demoBeforeBed => 'antes de dormir';
+
+  @override
+  String get sectionTheme => 'Tema';
+
+  @override
+  String get themeNightApricot => 'Azul noche y albaricoque';
+
+  @override
+  String get themeCobaltPeach => 'Cobalto y melocotón';
+
+  @override
+  String get themeTealCoral => 'Petróleo y coral';
+
+  @override
+  String get themePlumPeach => 'Ciruela y melocotón';
+
+  @override
+  String get themeDefault => 'Predeterminado';
+
+  @override
+  String earlyTakeTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '¿Tomar $count tomas ahora?',
+      one: '¿Tomar $name ahora?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String earlyTakeBody(String time) {
+    return 'Está programada a las $time.';
+  }
 }

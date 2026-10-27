@@ -1973,6 +1973,16 @@ class $SettingsTable extends Settings
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _themeMeta = const VerificationMeta('theme');
+  @override
+  late final GeneratedColumn<String> theme = GeneratedColumn<String>(
+    'theme',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('nightApricot'),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -1980,6 +1990,7 @@ class $SettingsTable extends Settings
     vibration,
     banners,
     snoozeMinutes,
+    theme,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2031,6 +2042,12 @@ class $SettingsTable extends Settings
     } else if (isInserting) {
       context.missing(_snoozeMinutesMeta);
     }
+    if (data.containsKey('theme')) {
+      context.handle(
+        _themeMeta,
+        theme.isAcceptableOrUnknown(data['theme']!, _themeMeta),
+      );
+    }
     return context;
   }
 
@@ -2060,6 +2077,10 @@ class $SettingsTable extends Settings
         DriftSqlType.int,
         data['${effectivePrefix}snooze_minutes'],
       )!,
+      theme: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}theme'],
+      )!,
     );
   }
 
@@ -2078,12 +2099,16 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
   final bool vibration;
   final bool banners;
   final int snoozeMinutes;
+
+  /// A ThemeChoice name. Added in schema version 2.
+  final String theme;
   const SettingsRow({
     required this.id,
     required this.sound,
     required this.vibration,
     required this.banners,
     required this.snoozeMinutes,
+    required this.theme,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2093,6 +2118,7 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     map['vibration'] = Variable<bool>(vibration);
     map['banners'] = Variable<bool>(banners);
     map['snooze_minutes'] = Variable<int>(snoozeMinutes);
+    map['theme'] = Variable<String>(theme);
     return map;
   }
 
@@ -2103,6 +2129,7 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       vibration: Value(vibration),
       banners: Value(banners),
       snoozeMinutes: Value(snoozeMinutes),
+      theme: Value(theme),
     );
   }
 
@@ -2117,6 +2144,7 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       vibration: serializer.fromJson<bool>(json['vibration']),
       banners: serializer.fromJson<bool>(json['banners']),
       snoozeMinutes: serializer.fromJson<int>(json['snoozeMinutes']),
+      theme: serializer.fromJson<String>(json['theme']),
     );
   }
   @override
@@ -2128,6 +2156,7 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       'vibration': serializer.toJson<bool>(vibration),
       'banners': serializer.toJson<bool>(banners),
       'snoozeMinutes': serializer.toJson<int>(snoozeMinutes),
+      'theme': serializer.toJson<String>(theme),
     };
   }
 
@@ -2137,12 +2166,14 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
     bool? vibration,
     bool? banners,
     int? snoozeMinutes,
+    String? theme,
   }) => SettingsRow(
     id: id ?? this.id,
     sound: sound ?? this.sound,
     vibration: vibration ?? this.vibration,
     banners: banners ?? this.banners,
     snoozeMinutes: snoozeMinutes ?? this.snoozeMinutes,
+    theme: theme ?? this.theme,
   );
   SettingsRow copyWithCompanion(SettingsCompanion data) {
     return SettingsRow(
@@ -2153,6 +2184,7 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
       snoozeMinutes: data.snoozeMinutes.present
           ? data.snoozeMinutes.value
           : this.snoozeMinutes,
+      theme: data.theme.present ? data.theme.value : this.theme,
     );
   }
 
@@ -2163,13 +2195,15 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           ..write('sound: $sound, ')
           ..write('vibration: $vibration, ')
           ..write('banners: $banners, ')
-          ..write('snoozeMinutes: $snoozeMinutes')
+          ..write('snoozeMinutes: $snoozeMinutes, ')
+          ..write('theme: $theme')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, sound, vibration, banners, snoozeMinutes);
+  int get hashCode =>
+      Object.hash(id, sound, vibration, banners, snoozeMinutes, theme);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2178,7 +2212,8 @@ class SettingsRow extends DataClass implements Insertable<SettingsRow> {
           other.sound == this.sound &&
           other.vibration == this.vibration &&
           other.banners == this.banners &&
-          other.snoozeMinutes == this.snoozeMinutes);
+          other.snoozeMinutes == this.snoozeMinutes &&
+          other.theme == this.theme);
 }
 
 class SettingsCompanion extends UpdateCompanion<SettingsRow> {
@@ -2187,12 +2222,14 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
   final Value<bool> vibration;
   final Value<bool> banners;
   final Value<int> snoozeMinutes;
+  final Value<String> theme;
   const SettingsCompanion({
     this.id = const Value.absent(),
     this.sound = const Value.absent(),
     this.vibration = const Value.absent(),
     this.banners = const Value.absent(),
     this.snoozeMinutes = const Value.absent(),
+    this.theme = const Value.absent(),
   });
   SettingsCompanion.insert({
     this.id = const Value.absent(),
@@ -2200,6 +2237,7 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
     required bool vibration,
     required bool banners,
     required int snoozeMinutes,
+    this.theme = const Value.absent(),
   }) : sound = Value(sound),
        vibration = Value(vibration),
        banners = Value(banners),
@@ -2210,6 +2248,7 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
     Expression<bool>? vibration,
     Expression<bool>? banners,
     Expression<int>? snoozeMinutes,
+    Expression<String>? theme,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2217,6 +2256,7 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
       if (vibration != null) 'vibration': vibration,
       if (banners != null) 'banners': banners,
       if (snoozeMinutes != null) 'snooze_minutes': snoozeMinutes,
+      if (theme != null) 'theme': theme,
     });
   }
 
@@ -2226,6 +2266,7 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
     Value<bool>? vibration,
     Value<bool>? banners,
     Value<int>? snoozeMinutes,
+    Value<String>? theme,
   }) {
     return SettingsCompanion(
       id: id ?? this.id,
@@ -2233,6 +2274,7 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
       vibration: vibration ?? this.vibration,
       banners: banners ?? this.banners,
       snoozeMinutes: snoozeMinutes ?? this.snoozeMinutes,
+      theme: theme ?? this.theme,
     );
   }
 
@@ -2254,6 +2296,9 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
     if (snoozeMinutes.present) {
       map['snooze_minutes'] = Variable<int>(snoozeMinutes.value);
     }
+    if (theme.present) {
+      map['theme'] = Variable<String>(theme.value);
+    }
     return map;
   }
 
@@ -2264,7 +2309,8 @@ class SettingsCompanion extends UpdateCompanion<SettingsRow> {
           ..write('sound: $sound, ')
           ..write('vibration: $vibration, ')
           ..write('banners: $banners, ')
-          ..write('snoozeMinutes: $snoozeMinutes')
+          ..write('snoozeMinutes: $snoozeMinutes, ')
+          ..write('theme: $theme')
           ..write(')'))
         .toString();
   }
@@ -3998,6 +4044,7 @@ typedef $$SettingsTableCreateCompanionBuilder = SettingsCompanion Function({
   required bool vibration,
   required bool banners,
   required int snoozeMinutes,
+  Value<String> theme,
 });
 typedef $$SettingsTableUpdateCompanionBuilder = SettingsCompanion Function({
   Value<int> id,
@@ -4005,6 +4052,7 @@ typedef $$SettingsTableUpdateCompanionBuilder = SettingsCompanion Function({
   Value<bool> vibration,
   Value<bool> banners,
   Value<int> snoozeMinutes,
+  Value<String> theme,
 });
 
 class $$SettingsTableFilterComposer
@@ -4038,6 +4086,11 @@ class $$SettingsTableFilterComposer
 
   ColumnFilters<int> get snoozeMinutes => $composableBuilder(
     column: $table.snoozeMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get theme => $composableBuilder(
+    column: $table.theme,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -4075,6 +4128,11 @@ class $$SettingsTableOrderingComposer
     column: $table.snoozeMinutes,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get theme => $composableBuilder(
+    column: $table.theme,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SettingsTableAnnotationComposer
@@ -4102,6 +4160,9 @@ class $$SettingsTableAnnotationComposer
     column: $table.snoozeMinutes,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get theme =>
+      $composableBuilder(column: $table.theme, builder: (column) => column);
 }
 
 class $$SettingsTableTableManager
@@ -4140,12 +4201,14 @@ class $$SettingsTableTableManager
                 Value<bool> vibration = const Value.absent(),
                 Value<bool> banners = const Value.absent(),
                 Value<int> snoozeMinutes = const Value.absent(),
+                Value<String> theme = const Value.absent(),
               }) => SettingsCompanion(
                 id: id,
                 sound: sound,
                 vibration: vibration,
                 banners: banners,
                 snoozeMinutes: snoozeMinutes,
+                theme: theme,
               ),
           createCompanionCallback:
               ({
@@ -4154,12 +4217,14 @@ class $$SettingsTableTableManager
                 required bool vibration,
                 required bool banners,
                 required int snoozeMinutes,
+                Value<String> theme = const Value.absent(),
               }) => SettingsCompanion.insert(
                 id: id,
                 sound: sound,
                 vibration: vibration,
                 banners: banners,
                 snoozeMinutes: snoozeMinutes,
+                theme: theme,
               ),
           withReferenceMapper: (p0) => p0
               .map(

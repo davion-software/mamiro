@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/dose_slot.dart';
 import 'package:mamiro/l10n/l10n.dart';
-import 'package:mamiro/theme/palette.dart';
 import 'package:mamiro/theme/widgets/paper_card.dart';
 import 'package:mamiro/theme/widgets/pill_glyph.dart';
+import 'package:mamiro/theme/widgets/status_chip.dart';
 
 enum _DoseMenu { take, skip }
 
@@ -62,14 +63,7 @@ final class DoseTile extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: textTheme.bodyMedium,
                   ),
-                if (status != null)
-                  Text(
-                    status.$1,
-                    style: textTheme.labelSmall?.copyWith(
-                      color: status.$2,
-                      letterSpacing: 0.3,
-                    ),
-                  ),
+                if (status != null) ...[const SizedBox(height: 4), status],
               ],
             ),
           ),
@@ -86,7 +80,7 @@ final class DoseTile extends StatelessWidget {
           ],
           PopupMenuButton<_DoseMenu>(
             tooltip: l10n.moreActions,
-            icon: const Icon(Icons.more_vert, color: MamiroPalette.inkSoft),
+            icon: Icon(Icons.more_vert, color: context.colors.inkSoft),
             onSelected: (choice) => switch (choice) {
               _DoseMenu.take => onTake(slot.id),
               _DoseMenu.skip => onSkip(slot.id),
@@ -108,17 +102,23 @@ final class DoseTile extends StatelessWidget {
     );
   }
 
-  (String, Color)? _statusLine(BuildContext context) {
+  StatusChip? _statusLine(BuildContext context) {
     final l10n = context.l10n;
     switch (slot.status) {
       case SlotStatus.missed:
-        return (l10n.statusMissed, MamiroPalette.coralDeep);
+        return StatusChip(
+          label: l10n.statusMissed,
+          tone: StatusTone.danger,
+          icon: Icons.error_outline,
+        );
       case SlotStatus.snoozed:
         final until = slot.snoozeUntil;
-        if (until == null) return (l10n.statusSnoozed, MamiroPalette.inkSoft);
-        return (
-          l10n.statusSnoozedUntil(context.formats.clock(until)),
-          MamiroPalette.inkSoft,
+        return StatusChip(
+          label: until == null
+              ? l10n.statusSnoozed
+              : l10n.statusSnoozedUntil(context.formats.clock(until)),
+          tone: StatusTone.neutral,
+          icon: Icons.snooze,
         );
       case SlotStatus.due:
       case SlotStatus.later:

@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/theme/palette.dart';
 
 final class TakenRing extends StatelessWidget {
@@ -22,15 +23,19 @@ final class TakenRing extends StatelessWidget {
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _RingPainter(progress: total == 0 ? 0 : taken / total),
+        painter: _RingPainter(
+          progress: total == 0 ? 0 : taken / total,
+          track: context.colors.primaryContainer,
+          fill: context.colors.success,
+        ),
         child: Center(
           child: Text(
             '$taken/$total',
-            style: const TextStyle(
+            style: TextStyle(
               fontFamily: MamiroPalette.fontFamily,
               fontWeight: FontWeight.w600,
               fontSize: 16,
-              color: MamiroPalette.ink,
+              color: context.colors.ink,
             ),
           ),
         ),
@@ -40,20 +45,26 @@ final class TakenRing extends StatelessWidget {
 }
 
 class _RingPainter extends CustomPainter {
-  const _RingPainter({required this.progress});
+  const _RingPainter({
+    required this.progress,
+    required this.track,
+    required this.fill,
+  });
 
   final double progress;
+  final Color track;
+  final Color fill;
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width / 2 - 5;
     final background = Paint()
-      ..color = MamiroPalette.ringTrack
+      ..color = track
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7;
     final foreground = Paint()
-      ..color = MamiroPalette.coralStrong
+      ..color = fill
       ..style = PaintingStyle.stroke
       ..strokeWidth = 7
       ..strokeCap = StrokeCap.round;
@@ -70,6 +81,8 @@ class _RingPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _RingPainter oldDelegate) {
-    return oldDelegate.progress != progress;
+    return oldDelegate.progress != progress ||
+        oldDelegate.track != track ||
+        oldDelegate.fill != fill;
   }
 }

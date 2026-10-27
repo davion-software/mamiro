@@ -6,6 +6,7 @@ import 'package:mamiro/core/app_log.dart';
 import 'package:mamiro/core/app_settings.dart';
 import 'package:mamiro/core/result.dart';
 import 'package:mamiro/core/storage_failure.dart';
+import 'package:mamiro/core/theme_choice.dart';
 import 'package:mamiro/data/providers.dart';
 import 'package:mamiro/services/alarm_gateway.dart';
 import 'package:mamiro/services/app_providers.dart';
@@ -73,6 +74,9 @@ final class SettingsNotifier extends Notifier<AsyncValue<SettingsState>> {
 
   void setBanners(bool value) =>
       _update((settings) => settings.copyWith(banners: value));
+
+  void setTheme(ThemeChoice value) =>
+      _update((settings) => settings.copyWith(theme: value));
 
   void setSnoozeMinutes(int value) =>
       _update((settings) => settings.copyWith(snoozeMinutes: value));
