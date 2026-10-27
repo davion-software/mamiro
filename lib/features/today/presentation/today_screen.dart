@@ -5,8 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mamiro/theme/mamiro_colors.dart';
 import 'package:mamiro/core/app_log.dart';
-import 'package:mamiro/core/schedule.dart';
+import 'package:mamiro/features/today/presentation/early_take.dart';
 import 'package:mamiro/features/today/presentation/today_notifier.dart';
+import 'package:mamiro/features/today/presentation/widgets/alarm_access_banner.dart';
 import 'package:mamiro/features/today/presentation/widgets/banner_strip.dart';
 import 'package:mamiro/features/today/presentation/widgets/done_list.dart';
 import 'package:mamiro/features/today/presentation/widgets/dose_section.dart';
@@ -48,16 +49,20 @@ final class _TodayContent extends StatelessWidget {
   final TodayState state;
   final TodayNotifier notifier;
 
-  /// Takes the doses, first asking when if they are more than
-  /// [lateTakeThreshold] late.
   void _take(BuildContext context, List<String> slotIds) {
     final slots = [
       for (final slot in state.allSlots)
         if (slotIds.contains(slot.id)) slot,
     ];
     unawaited(
-      askTakenAt(context, slots: slots, now: state.now)
-          .then((answer) {
+      confirmEarlyTake(context, slots: slots, now: state.now)
+          .then((confirmed) async {
+            if (!confirmed || !context.mounted) return;
+            final answer = await askTakenAt(
+              context,
+              slots: slots,
+              now: state.now,
+            );
             if (answer == null || !context.mounted) return;
             if (slotIds.length == 1) {
               notifier.take(slotIds.single, takenAt: answer.at);
@@ -82,6 +87,7 @@ final class _TodayContent extends StatelessWidget {
               SliverList.list(
                 children: [
                   _TodayHeader(state: state),
+                  if (state.hasMedications) const AlarmAccessBanner(),
                   if (state.failure case final failure?) ...[
                     const SizedBox(height: 16),
                     StorageBanner(failure: failure),

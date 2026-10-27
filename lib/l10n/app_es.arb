@@ -184,5 +184,16 @@
   "lateTakeNow": "Ahora ({time})",
   "lateTakeOnTime": "A su hora ({time})",
   "lateTakeOther": "Otra hora…",
-  "lateTakeAdjusted": "Ajustada a las {time}: debe estar entre la hora programada y ahora."
+  "lateTakeAdjusted": "Ajustada a las {time}: debe estar entre la hora programada y ahora.",
+  "accessBannerNotifications": "Las alarmas no sonarán con la app cerrada",
+  "accessBannerExact": "Las alarmas pueden sonar con retraso",
+  "accessBannerEnable": "Activar",
+  "primerTitle": "Para que Mamiro suene a tiempo",
+  "primerClosedApp": "Las alarmas suenan a la hora de cada toma, aunque la app esté cerrada.",
+  "primerActions": "Puedes tomar, posponer u omitir desde la propia notificación.",
+  "primerLater": "Puedes cambiarlo cuando quieras en Ajustes.",
+  "primerAllow": "Permitir alarmas",
+  "primerNotNow": "Ahora no",
+  "earlyTakeTitle": "{count, plural, =1{¿Tomar {name} ahora?} other{¿Tomar {count} tomas ahora?}}",
+  "earlyTakeBody": "Está programada a las {time}."
 }

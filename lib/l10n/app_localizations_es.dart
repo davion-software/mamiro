@@ -648,4 +648,50 @@ class AppLocalizationsEs extends AppLocalizations {
   String lateTakeAdjusted(String time) {
     return 'Ajustada a las $time: debe estar entre la hora programada y ahora.';
   }
+
+  @override
+  String get accessBannerNotifications =>
+      'Las alarmas no sonarán con la app cerrada';
+
+  @override
+  String get accessBannerExact => 'Las alarmas pueden sonar con retraso';
+
+  @override
+  String get accessBannerEnable => 'Activar';
+
+  @override
+  String get primerTitle => 'Para que Mamiro suene a tiempo';
+
+  @override
+  String get primerClosedApp =>
+      'Las alarmas suenan a la hora de cada toma, aunque la app esté cerrada.';
+
+  @override
+  String get primerActions =>
+      'Puedes tomar, posponer u omitir desde la propia notificación.';
+
+  @override
+  String get primerLater => 'Puedes cambiarlo cuando quieras en Ajustes.';
+
+  @override
+  String get primerAllow => 'Permitir alarmas';
+
+  @override
+  String get primerNotNow => 'Ahora no';
+
+  @override
+  String earlyTakeTitle(int count, String name) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '¿Tomar $count tomas ahora?',
+      one: '¿Tomar $name ahora?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String earlyTakeBody(String time) {
+    return 'Está programada a las $time.';
+  }
 }

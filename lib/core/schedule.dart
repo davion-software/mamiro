@@ -344,3 +344,12 @@ List<DaySummary> lastSevenDays({
     return DaySummary(day: day, mark: markFor(slots), slots: slots);
   });
 }
+
+/// How far ahead of its time a dose can be taken without asking first.
+const earlyTakeWindow = Duration(hours: 1);
+
+/// Whether taking a dose scheduled at [scheduledAt] now would be more than
+/// [earlyTakeWindow] early, which is likely a mis-tap.
+bool isEarlyTake({required DateTime scheduledAt, required DateTime now}) {
+  return scheduledAt.difference(now) > earlyTakeWindow;
+}
